@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,8 +33,19 @@ export default function Home() {
                 <p className="text-sm text-gray-600">Generate insights for better decision making</p>
               </div>
             </div>
+            
           </div>
+          
+            <div className="mt-6">
+              <Link
+                href="/support"
+                className="inline-block bg-zinc-900 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Get Support
+              </Link>
+            </div>
         </div>
+        
       </div>
     </div>
   );
