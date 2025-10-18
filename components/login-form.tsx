@@ -46,7 +46,7 @@ export function LoginForm() {
             <Pill className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold">Gagana Pharmacy MIS</CardTitle>
+        <CardTitle className="text-2xl font-bold">Medi Lync</CardTitle>
         <CardDescription>Sign in to access the management system</CardDescription>
       </CardHeader>
       <CardContent>
