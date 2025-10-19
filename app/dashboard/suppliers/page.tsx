@@ -348,7 +348,7 @@ export default function SuppliersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${(suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000).toFixed(0)}K
+              LKR {(suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000).toFixed(0)}K
             </div>
             <p className="text-xs text-muted-foreground">All time</p>
           </CardContent>
@@ -616,7 +616,7 @@ export default function SuppliersPage() {
                                     </div>
                                     <div className="border rounded-lg p-4">
                                       <Label className="text-muted-foreground">Total Spent</Label>
-                                      <p className="text-2xl font-bold mt-1">${selectedSupplier.totalSpent.toLocaleString()}</p>
+                                      <p className="text-2xl font-bold mt-1">LKR {selectedSupplier.totalSpent.toLocaleString()}</p>
                                     </div>
                                   </div>
                                 </TabsContent>
@@ -632,7 +632,7 @@ export default function SuppliersPage() {
                                               <th className="text-left py-2 px-3 text-sm font-medium">PO ID</th>
                                               <th className="text-left py-2 px-3 text-sm font-medium">Date</th>
                                               <th className="text-left py-2 px-3 text-sm font-medium">Items</th>
-                                              <th className="text-right py-2 px-3 text-sm font-medium">Amount</th>
+                                              <th className="text-right py-2 px-3 text-sm font-medium">Amount (LKR)</th>
                                               <th className="text-left py-2 px-3 text-sm font-medium">Delivery</th>
                                               <th className="text-left py-2 px-3 text-sm font-medium">Quality</th>
                                             </tr>
@@ -643,7 +643,7 @@ export default function SuppliersPage() {
                                                 <td className="py-2 px-3 text-sm font-medium">{history.poId}</td>
                                                 <td className="py-2 px-3 text-sm">{history.date}</td>
                                                 <td className="py-2 px-3 text-sm">{history.items.join(", ")}</td>
-                                                <td className="py-2 px-3 text-sm text-right">${history.amount.toLocaleString()}</td>
+                                                <td className="py-2 px-3 text-sm text-right">LKR {history.amount.toLocaleString()}</td>
                                                 <td className="py-2 px-3">
                                                   <Badge
                                                     variant={getDeliveryStatusBadge(history.deliveryStatus).variant}

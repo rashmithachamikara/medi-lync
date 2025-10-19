@@ -304,11 +304,11 @@ export default function PurchaseOrdersPage() {
                         required
                       />
                     </div>
-                    <div className="space-y-1 flex gap-2">
+                      <div className="space-y-1 flex gap-2">
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="Unit Price ($)"
+                        placeholder="Unit Price (LKR)"
                         value={item.unitPrice}
                         onChange={(e) => updateItemField(index, "unitPrice", e.target.value)}
                         required
@@ -382,7 +382,7 @@ export default function PurchaseOrdersPage() {
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">PO ID</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Supplier</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Items</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Amount</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Amount (LKR)</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Delivery Date</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
@@ -394,7 +394,7 @@ export default function PurchaseOrdersPage() {
                     <td className="py-3 px-4 text-sm font-medium text-foreground">{order.id}</td>
                     <td className="py-3 px-4 text-sm text-foreground">{order.supplier}</td>
                     <td className="py-3 px-4 text-sm text-foreground">{order.items.length} item(s)</td>
-                    <td className="py-3 px-4 text-sm text-foreground">${order.totalAmount.toFixed(2)}</td>
+                    <td className="py-3 px-4 text-sm text-foreground">LKR {order.totalAmount.toFixed(2)}</td>
                     <td className="py-3 px-4 text-sm text-foreground">{order.expectedDeliveryDate}</td>
                     <td className="py-3 px-4">
                       <Badge variant={getStatusBadge(order.status).variant} className={getStatusBadge(order.status).className}>
@@ -446,7 +446,7 @@ export default function PurchaseOrdersPage() {
                                   </div>
                                   <div>
                                     <Label className="text-muted-foreground">Total Amount</Label>
-                                    <p className="font-medium text-lg">${selectedOrder.totalAmount.toFixed(2)}</p>
+                                    <p className="font-medium text-lg">LKR {selectedOrder.totalAmount.toFixed(2)}</p>
                                   </div>
                                 </div>
 
@@ -467,9 +467,9 @@ export default function PurchaseOrdersPage() {
                                           <tr key={idx} className="border-t">
                                             <td className="py-2 px-3 text-sm">{item.name}</td>
                                             <td className="py-2 px-3 text-sm text-right">{item.quantity}</td>
-                                            <td className="py-2 px-3 text-sm text-right">${item.unitPrice.toFixed(2)}</td>
+                                            <td className="py-2 px-3 text-sm text-right">LKR {item.unitPrice.toFixed(2)}</td>
                                             <td className="py-2 px-3 text-sm text-right font-medium">
-                                              ${(item.quantity * item.unitPrice).toFixed(2)}
+                                              LKR {(item.quantity * item.unitPrice).toFixed(2)}
                                             </td>
                                           </tr>
                                         ))}
