@@ -25,7 +25,7 @@ import Link from "next/link"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Purchase Orders", href: "/dashboard/procurement", icon: FileText },
+  { name: "Purchase Orders", href: "/dashboard/purchaseOrders", icon: FileText },
   { name: "Goods Receiving", href: "/dashboard/goods-receiving", icon: PackageCheck },
   { name: "Suppliers", href: "/dashboard/suppliers", icon: Building2 },
   { name: "Stock Control", href: "/dashboard/stock", icon: Package },
