@@ -134,7 +134,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">EMAIL</label>
+              <label className="text-sm font-medium text-gray-700">Email</label>
               <div className="relative">
                 <input
                   type="email"
@@ -158,7 +158,7 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
-                PASSWORD
+                Password
               </label>
               <div className="relative">
                 <input
