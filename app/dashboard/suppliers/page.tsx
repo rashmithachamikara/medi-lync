@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, Plus, Edit, Star, AlertCircle, TrendingUp, Package, DollarSign, Clock, Eye } from "lucide-react"
+import { Search, Plus, Edit, Star, AlertCircle, Package, DollarSign, Eye } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface Supplier {
@@ -30,6 +30,7 @@ interface Supplier {
   totalOrders: number
   totalSpent: number
   averageDeliveryTime: number
+  lastOrderDate: string
   notes: string
   registeredDate: string
 }
@@ -60,6 +61,7 @@ const mockSuppliers: Supplier[] = [
     totalOrders: 156,
     totalSpent: 485000,
     averageDeliveryTime: 3.2,
+    lastOrderDate: "2025-01-08",
     notes: "Reliable supplier, excellent quality control",
     registeredDate: "2023-01-15",
   },
@@ -79,6 +81,7 @@ const mockSuppliers: Supplier[] = [
     totalOrders: 98,
     totalSpent: 298000,
     averageDeliveryTime: 4.5,
+    lastOrderDate: "2025-01-07",
     notes: "Good pricing, occasional delays",
     registeredDate: "2023-03-22",
   },
@@ -98,6 +101,7 @@ const mockSuppliers: Supplier[] = [
     totalOrders: 127,
     totalSpent: 356000,
     averageDeliveryTime: 3.8,
+    lastOrderDate: "2025-01-06",
     notes: "Excellent customer service",
     registeredDate: "2023-02-10",
   },
@@ -117,6 +121,7 @@ const mockSuppliers: Supplier[] = [
     totalOrders: 45,
     totalSpent: 125000,
     averageDeliveryTime: 6.2,
+    lastOrderDate: "2024-12-20",
     notes: "Frequent quality issues, multiple late deliveries. Under review.",
     registeredDate: "2024-06-05",
   },
@@ -214,6 +219,7 @@ export default function SuppliersPage() {
       totalOrders: 0,
       totalSpent: 0,
       averageDeliveryTime: 0,
+      lastOrderDate: "-",
       notes: formData.notes || "",
       registeredDate: new Date().toISOString().split("T")[0],
     }
@@ -316,7 +322,7 @@ export default function SuppliersPage() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Suppliers</CardTitle>
@@ -327,18 +333,6 @@ export default function SuppliersPage() {
             <p className="text-xs text-muted-foreground">
               {suppliers.filter((s) => s.status === "active").length} active
             </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Performance</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {(suppliers.reduce((sum, s) => sum + s.performanceScore, 0) / suppliers.length).toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground">Overall rating</p>
           </CardContent>
         </Card>
         <Card>
@@ -405,7 +399,8 @@ export default function SuppliersPage() {
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Name</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Contact</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Category</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Performance</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Orders</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Last Order</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
                 </tr>
@@ -427,21 +422,8 @@ export default function SuppliersPage() {
                       </div>
                     </td>
                     <td className="py-3 px-4 text-sm text-foreground">{supplier.category}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-medium ${getPerformanceColor(supplier.performanceScore)}`}>
-                          {supplier.performanceScore}%
-                        </span>
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${i < Math.round(supplier.qualityRating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </td>
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">{supplier.totalOrders}</td>
+                    <td className="py-3 px-4 text-sm text-foreground">{supplier.lastOrderDate}</td>
                     <td className="py-3 px-4">
                       <Badge
                         variant={getStatusBadge(supplier.status).variant}
