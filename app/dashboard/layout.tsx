@@ -17,12 +17,17 @@ import {
   Sun,
   Menu,
   X,
+  FileText,
+  PackageCheck,
+  Building2,
 } from "lucide-react"
 import Link from "next/link"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Procurement", href: "/dashboard/procurement", icon: ShoppingCart },
+  { name: "Purchase Orders", href: "/dashboard/procurement", icon: FileText },
+  { name: "Goods Receiving", href: "/dashboard/goods-receiving", icon: PackageCheck },
+  { name: "Suppliers", href: "/dashboard/suppliers", icon: Building2 },
   { name: "Stock Control", href: "/dashboard/stock", icon: Package },
   { name: "Collections", href: "/dashboard/collections", icon: DollarSign },
   { name: "HR Management", href: "/dashboard/hr", icon: Users },
