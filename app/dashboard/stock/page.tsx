@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, ShoppingCart } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const generateMockStock = () => {
@@ -65,6 +65,12 @@ export default function StockPage() {
   const paginatedStock = filteredStock.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   const locations = [...new Set(stock.map((item) => item.location))]
+
+  const handleOrderRequest = (item: any) => {
+    alert(`Order request submitted for:\n\nItem: ${item.name}\nCurrent Stock: ${item.quantity}\nReorder Level: ${item.reorderLevel}\n\nThis would navigate to the Purchase Orders page in production.`)
+    // In production, this would redirect to /dashboard/procurement with pre-filled data
+    // or open a modal to create a new PO
+  }
 
   return (
     <div className="space-y-6">
@@ -177,9 +183,17 @@ export default function StockPage() {
                       </Badge>
                     </td>
                     <td className="py-3 px-4">
-                      <Button size="sm" variant="outline">
-                        Update
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">
+                          Update
+                        </Button>
+                        {item.status === "low" && (
+                          <Button size="sm" variant="default" onClick={() => handleOrderRequest(item)}>
+                            <ShoppingCart className="h-4 w-4 mr-1" />
+                            Order
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
