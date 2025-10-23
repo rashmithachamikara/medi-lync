@@ -56,7 +56,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden pb-8">
+    <div className="h-screen flex overflow-hidden">
       {/* Left Side */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 text-white p-10 flex-col justify-center items-start relative">
         <div className="absolute inset-0 opacity-10">
