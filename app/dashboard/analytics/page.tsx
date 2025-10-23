@@ -187,12 +187,12 @@ const dailySalesTrend = [
 export default function AnalyticsPage() {
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
-        
-          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
-            Analytics
-          </h3>
-        
+      {/* Header section */}
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between mb-6">
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+          Analytics
+        </h3>
+
         <div className="flex gap-2">
           <Select defaultValue="last-6-months">
             <SelectTrigger className="w-40">
@@ -213,7 +213,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -273,149 +273,168 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Revenue, Expenses & Profit</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={{
-              revenue: {
-                label: "Revenue",
-                color: "hsl(var(--chart-1))",
-              },
-              expenses: {
-                label: "Expenses",
-                color: "hsl(0, 84%, 60%)",
-              },
-              profit: {
-                label: "Profit",
-                color: "hsl(142, 71%, 45%)",
-              },
-            }}
-            className="h-[350px]"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyTurnover}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="hsl(var(--chart-1))"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="hsl(var(--chart-1))"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                  <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="hsl(142, 71%, 45%)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="hsl(142, 71%, 45%)"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  className="stroke-border"
-                />
-                <XAxis dataKey="month" className="text-xs" />
-                <YAxis className="text-xs" />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="var(--color-revenue)"
-                  fill="url(#colorRevenue)"
-                  strokeWidth={2}
-                  name="Revenue (LKR)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="profit"
-                  stroke="var(--color-profit)"
-                  fill="url(#colorProfit)"
-                  strokeWidth={2}
-                  name="Profit (LKR)"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="var(--color-expenses)"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name="Expenses (LKR)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* Monthly Revenue Chart */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Monthly Revenue, Expenses & Profit</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                revenue: {
+                  label: "Revenue",
+                  color: "hsl(var(--chart-1))",
+                },
+                expenses: {
+                  label: "Expenses",
+                  color: "hsl(0, 84%, 60%)",
+                },
+                profit: {
+                  label: "Profit",
+                  color: "hsl(142, 71%, 45%)",
+                },
+              }}
+              className="h-[350px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={monthlyTurnover}>
+                  <defs>
+                    <linearGradient
+                      id="colorRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="hsl(var(--chart-1))"
+                        stopOpacity={0.3}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="hsl(var(--chart-1))"
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                    <linearGradient
+                      id="colorProfit"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="hsl(142, 71%, 45%)"
+                        stopOpacity={0.3}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="hsl(142, 71%, 45%)"
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border"
+                  />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis className="text-xs" />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="var(--color-revenue)"
+                    fill="url(#colorRevenue)"
+                    strokeWidth={2}
+                    name="Revenue (LKR)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="var(--color-profit)"
+                    fill="url(#colorProfit)"
+                    strokeWidth={2}
+                    name="Profit (LKR)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expenses"
+                    stroke="var(--color-expenses)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name="Expenses (LKR)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily Sales Trend (This Week)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={{
-              sales: {
-                label: "Sales",
-                color: "hsl(var(--chart-1))",
-              },
-              orders: {
-                label: "Orders",
-                color: "hsl(var(--chart-3))",
-              },
-            }}
-            className="h-[300px]"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dailySalesTrend}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  className="stroke-border"
-                />
-                <XAxis dataKey="day" className="text-xs" />
-                <YAxis yAxisId="left" className="text-xs" />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  className="text-xs"
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
-                <Bar
-                  yAxisId="left"
-                  dataKey="sales"
-                  fill="var(--color-sales)"
-                  name="Sales (LKR)"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="orders"
-                  stroke="var(--color-orders)"
-                  strokeWidth={2}
-                  name="Orders"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* Daily Sales Trend */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Daily Sales Trend (This Week)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                sales: {
+                  label: "Sales",
+                  color: "hsl(var(--chart-1))",
+                },
+                orders: {
+                  label: "Orders",
+                  color: "hsl(var(--chart-3))",
+                },
+              }}
+              className="h-[300px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailySalesTrend}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border"
+                  />
+                  <XAxis dataKey="day" className="text-xs" />
+                  <YAxis yAxisId="left" className="text-xs" />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    className="text-xs"
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Bar
+                    yAxisId="left"
+                    dataKey="sales"
+                    fill="var(--color-sales)"
+                    name="Sales (LKR)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="orders"
+                    stroke="var(--color-orders)"
+                    strokeWidth={2}
+                    name="Orders"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Sales Distribution and Stock Level */}
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
         {/* Sales by Category */}
         <Card>
           <CardHeader>
@@ -522,6 +541,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
+        {/* Stock Level Status */}
         <Card>
           <CardHeader>
             <CardTitle>Stock Level Status</CardTitle>
@@ -596,146 +616,155 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Stock Items by Status</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">
-            Items requiring attention or monitoring
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
-                    Product Name
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">
-                    Current Qty
-                  </th>
-                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">
-                    Reorder Level
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
-                    Location
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {stockBreakdown.map((item) => {
-                  const statusColor =
-                    item.status === "Critical"
-                      ? "hsl(0, 84%, 60%)"
-                      : item.status === "Low"
-                      ? "hsl(36, 100%, 50%)"
-                      : "hsl(142, 71%, 45%)";
-                  return (
-                    <tr
-                      key={item.id}
-                      className="border-b hover:bg-muted/50 transition-colors"
-                    >
-                      <td className="py-3 px-4 text-foreground">{item.name}</td>
-                      <td className="py-3 px-4">
-                        <span
-                          className="px-2 py-1 rounded-full text-xs font-medium text-white"
-                          style={{ backgroundColor: statusColor }}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center font-medium text-foreground">
-                        {item.quantity}
-                      </td>
-                      <td className="py-3 px-4 text-center text-muted-foreground">
-                        {item.reorderLevel}
-                      </td>
-                      <td className="py-3 px-4 text-muted-foreground">
-                        {item.location}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Stock Items Table */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Stock Items by Status</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Items requiring attention or monitoring
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                      Product Name
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      Current Qty
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                      Reorder Level
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                      Location
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stockBreakdown.map((item) => {
+                    const statusColor =
+                      item.status === "Critical"
+                        ? "hsl(0, 84%, 60%)"
+                        : item.status === "Low"
+                        ? "hsl(36, 100%, 50%)"
+                        : "hsl(142, 71%, 45%)";
+                    return (
+                      <tr
+                        key={item.id}
+                        className="border-b hover:bg-muted/50 transition-colors"
+                      >
+                        <td className="py-3 px-4 text-foreground">
+                          {item.name}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className="px-2 py-1 rounded-full text-xs font-medium text-white"
+                            style={{ backgroundColor: statusColor }}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center font-medium text-foreground">
+                          {item.quantity}
+                        </td>
+                        <td className="py-3 px-4 text-center text-muted-foreground">
+                          {item.reorderLevel}
+                        </td>
+                        <td className="py-3 px-4 text-muted-foreground">
+                          {item.location}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Inventory Turnover Rate</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={{
-              turnoverRate: {
-                label: "Turnover Rate",
-                color: "hsl(var(--chart-1))",
-              },
-              daysInStock: {
-                label: "Days in Stock",
-                color: "hsl(var(--chart-2))",
-              },
-            }}
-            className="h-[300px]"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={inventoryTurnover}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  className="stroke-border"
-                />
-                <XAxis dataKey="month" className="text-xs" />
-                <YAxis yAxisId="left" className="text-xs" />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  className="text-xs"
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="turnoverRate"
-                  stroke="var(--color-turnoverRate)"
-                  strokeWidth={3}
-                  name="Turnover Rate"
-                  dot={{
-                    r: 5,
-                    fill: "var(--color-turnoverRate)",
-                    stroke: "var(--color-turnoverRate)",
-                    strokeWidth: 2,
-                  }}
-                  activeDot={{ r: 7 }}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="daysInStock"
-                  stroke="var(--color-daysInStock)"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name="Avg Days in Stock"
-                  dot={{
-                    r: 5,
-                    fill: "var(--color-daysInStock)",
-                    stroke: "var(--color-daysInStock)",
-                    strokeWidth: 2,
-                  }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* Inventory Turnover */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Inventory Turnover Rate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                turnoverRate: {
+                  label: "Turnover Rate",
+                  color: "hsl(var(--chart-1))",
+                },
+                daysInStock: {
+                  label: "Days in Stock",
+                  color: "hsl(var(--chart-2))",
+                },
+              }}
+              className="h-[300px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={inventoryTurnover}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border"
+                  />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis yAxisId="left" className="text-xs" />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    className="text-xs"
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="turnoverRate"
+                    stroke="var(--color-turnoverRate)"
+                    strokeWidth={3}
+                    name="Turnover Rate"
+                    dot={{
+                      r: 5,
+                      fill: "var(--color-turnoverRate)",
+                      stroke: "var(--color-turnoverRate)",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{ r: 7 }}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="daysInStock"
+                    stroke="var(--color-daysInStock)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name="Avg Days in Stock"
+                    dot={{
+                      r: 5,
+                      fill: "var(--color-daysInStock)",
+                      stroke: "var(--color-daysInStock)",
+                      strokeWidth: 2,
+                    }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Branch Performance and Top Products */}
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
         {/* Branch Performance */}
         <Card>
           <CardHeader>
@@ -782,6 +811,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
+        {/* Top Selling Products */}
         <Card>
           <CardHeader>
             <CardTitle>Top Selling Products</CardTitle>
@@ -830,57 +860,60 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Supplier Performance Metrics</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={{
-              onTime: {
-                label: "On-Time Delivery %",
-                color: "hsl(var(--chart-1))",
-              },
-              quality: {
-                label: "Quality Score %",
-                color: "hsl(var(--chart-3))",
-              },
-            }}
-            className="h-[300px]"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={supplierPerformance}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  className="stroke-border"
-                />
-                <XAxis
-                  dataKey="supplier"
-                  className="text-xs"
-                  angle={-15}
-                  textAnchor="end"
-                  height={80}
-                />
-                <YAxis className="text-xs" domain={[0, 100]} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend />
-                <Bar
-                  dataKey="onTime"
-                  fill="var(--color-onTime)"
-                  name="On-Time Delivery %"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="quality"
-                  fill="var(--color-quality)"
-                  name="Quality Score %"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* Supplier Performance */}
+      <div className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Supplier Performance Metrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                onTime: {
+                  label: "On-Time Delivery %",
+                  color: "hsl(var(--chart-1))",
+                },
+                quality: {
+                  label: "Quality Score %",
+                  color: "hsl(var(--chart-3))",
+                },
+              }}
+              className="h-[300px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={supplierPerformance}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border"
+                  />
+                  <XAxis
+                    dataKey="supplier"
+                    className="text-xs"
+                    angle={-15}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis className="text-xs" domain={[0, 100]} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Bar
+                    dataKey="onTime"
+                    fill="var(--color-onTime)"
+                    name="On-Time Delivery %"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="quality"
+                    fill="var(--color-quality)"
+                    name="Quality Score %"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

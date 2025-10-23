@@ -93,12 +93,12 @@ export default function CollectionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
-        
-          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
-            Collection Management
-          </h3>
-        
+      {/* Header section */}
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between mb-6">
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+          Collection Management
+        </h3>
+
         <Button variant="outline">
           <Download className="h-4 w-4 mr-2" />
           Generate Report
@@ -106,181 +106,190 @@ export default function CollectionsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="max-w-7xl mx-auto mb-6">
+        {" "}
+        {/* Added mb-6 margin and max width */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Outstanding
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">
+                LKR {totalOutstanding.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Overdue Amount
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                LKR {totalOverdue.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending Collections
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">
+                {collections.filter((col) => col.status === "pending").length}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Collections Table */}
+      <div className="max-w-7xl mx-auto">
+        {" "}
+        {/* Added max width wrapper */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Outstanding
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              LKR {totalOutstanding.toLocaleString()}
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Outstanding Collections</CardTitle>
+              <div className="relative w-64">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search collections..."
+                  className="pl-8"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Overdue Amount
-            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-              LKR {totalOverdue.toLocaleString()}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pending Collections
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {collections.filter((col) => col.status === "pending").length}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Collection ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Customer
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Amount (LKR)
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Due Date
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCollections.map((collection) => (
+                    <tr
+                      key={collection.id}
+                      className="border-b border-border last:border-0"
+                    >
+                      <td className="py-3 px-4 text-sm font-medium text-foreground">
+                        {collection.id}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {collection.customer}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {collection.amount.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {collection.dueDate}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          variant={
+                            collection.status === "approved"
+                              ? "default"
+                              : collection.status === "overdue"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                        >
+                          {collection.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        {collection.status !== "approved" && (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  setSelectedCollection(collection.id)
+                                }
+                              >
+                                Record Payment
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Record Payment</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                  <Label>Collection ID</Label>
+                                  <Input value={collection.id} disabled />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Customer</Label>
+                                  <Input value={collection.customer} disabled />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Amount Due (LKR)</Label>
+                                  <Input
+                                    value={collection.amount.toLocaleString()}
+                                    disabled
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="payment-amount">
+                                    Payment Amount (LKR)
+                                  </Label>
+                                  <Input
+                                    id="payment-amount"
+                                    type="number"
+                                    placeholder="Enter payment amount"
+                                    value={paymentAmount}
+                                    onChange={(e) =>
+                                      setPaymentAmount(e.target.value)
+                                    }
+                                  />
+                                </div>
+                                <Button
+                                  onClick={handleRecordPayment}
+                                  className="w-full"
+                                >
+                                  Confirm Payment
+                                </Button>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Outstanding Collections</CardTitle>
-            <div className="relative w-64">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search collections..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Collection ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Customer
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Amount (LKR)
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Due Date
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCollections.map((collection) => (
-                  <tr
-                    key={collection.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">
-                      {collection.id}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {collection.customer}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {collection.amount.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {collection.dueDate}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={
-                          collection.status === "approved"
-                            ? "default"
-                            : collection.status === "overdue"
-                            ? "destructive"
-                            : "secondary"
-                        }
-                      >
-                        {collection.status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      {collection.status !== "approved" && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              onClick={() =>
-                                setSelectedCollection(collection.id)
-                              }
-                            >
-                              Record Payment
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Record Payment</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4 py-4">
-                              <div className="space-y-2">
-                                <Label>Collection ID</Label>
-                                <Input value={collection.id} disabled />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Customer</Label>
-                                <Input value={collection.customer} disabled />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Amount Due (LKR)</Label>
-                                <Input
-                                  value={collection.amount.toLocaleString()}
-                                  disabled
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="payment-amount">
-                                  Payment Amount (LKR)
-                                </Label>
-                                <Input
-                                  id="payment-amount"
-                                  type="number"
-                                  placeholder="Enter payment amount"
-                                  value={paymentAmount}
-                                  onChange={(e) =>
-                                    setPaymentAmount(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <Button
-                                onClick={handleRecordPayment}
-                                className="w-full"
-                              >
-                                Confirm Payment
-                              </Button>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

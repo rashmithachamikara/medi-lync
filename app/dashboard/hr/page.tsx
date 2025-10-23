@@ -22,6 +22,7 @@ const roles = [
   "Cashier",
   "Stock Keeper",
 ];
+
 const departments = ["Pharmacy", "Administration", "Sales", "Inventory", "HR"];
 
 const generateMockEmployees = () => {
@@ -102,186 +103,194 @@ export default function HRPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
-        
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
           <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
-            HR
+            HR Management
           </h3>
-        
-        {user?.role === "admin" && (
-          <Button>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Employee
-          </Button>
-        )}
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Employees
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {employees.length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Active
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {employees.filter((emp) => emp.status === "active").length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Inactive
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-muted-foreground">
-              {employees.filter((emp) => emp.status === "inactive").length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pending Approvals
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-              {totalPendingApprovals}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          {user?.role === "admin" && (
+            <Button>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Employee
+            </Button>
+          )}
+        </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Employee Directory</CardTitle>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search employees..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+        {/* Summary Cards */}
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Employees
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">
+                {employees.length}
               </div>
-              <Select value={filterRole} onValueChange={setFilterRole}>
-                <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  {roles.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-full sm:w-32">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Active
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {employees.filter((emp) => emp.status === "active").length}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Inactive
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-muted-foreground">
+                {employees.filter((emp) => emp.status === "inactive").length}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending Approvals
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {totalPendingApprovals}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Employee Directory Table */}
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <CardTitle>Employee Directory</CardTitle>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search employees..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Select value={filterRole} onValueChange={setFilterRole}>
+                  <SelectTrigger className="w-full sm:w-40">
+                    <SelectValue placeholder="Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    {roles.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger className="w-full sm:w-32">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Employee ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Role
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Department
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Approvals
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEmployees.map((employee) => (
-                  <tr
-                    key={employee.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">
-                      {employee.id}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {employee.name}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {employee.role}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {employee.department}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={
-                          employee.status === "active" ? "default" : "secondary"
-                        }
-                      >
-                        {employee.status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      {employee.pendingApprovals > 0 && (
-                        <Badge variant="outline">
-                          {employee.pendingApprovals} pending
-                        </Badge>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Button size="sm" variant="outline">
-                        View
-                      </Button>
-                    </td>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Employee ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Name
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Role
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Department
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Approvals
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                </thead>
+                <tbody>
+                  {filteredEmployees.map((employee) => (
+                    <tr
+                      key={employee.id}
+                      className="border-b border-border last:border-0"
+                    >
+                      <td className="py-3 px-4 text-sm font-medium text-foreground">
+                        {employee.id}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {employee.name}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {employee.role}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {employee.department}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          variant={
+                            employee.status === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {employee.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        {employee.pendingApprovals > 0 && (
+                          <Badge variant="outline">
+                            {employee.pendingApprovals} pending
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Button size="sm" variant="outline">
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

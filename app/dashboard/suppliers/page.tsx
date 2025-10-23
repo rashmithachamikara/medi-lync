@@ -350,581 +350,601 @@ export default function SuppliersPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
-        
+      {/* Header section */}
+      <div className="max-w-7xl mx-auto space-y-6 mb-6">
+        {" "}
+        {/* Added mb-6 */}
+        <div className="flex items-center justify-between">
           <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
             Supplier Management
           </h3>
-        
-        <Button onClick={() => setShowAddForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Supplier
-        </Button>
+          <Button onClick={() => setShowAddForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Supplier
+          </Button>
+        </div>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Suppliers
-            </CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{suppliers.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {suppliers.filter((s) => s.status === "active").length} active
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              LKR{" "}
-              {(
-                suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000
-              ).toFixed(0)}
-              K
-            </div>
-            <p className="text-xs text-muted-foreground">All time</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Flagged Suppliers
-            </CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {suppliers.filter((s) => s.status === "flagged").length}
-            </div>
-            <p className="text-xs text-muted-foreground">Requires attention</p>
-          </CardContent>
-        </Card>
+      <div className="max-w-7xl mx-auto mb-6">
+        {" "}
+        {/* Added mb-6 */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Suppliers
+              </CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{suppliers.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {suppliers.filter((s) => s.status === "active").length} active
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                LKR{" "}
+                {(
+                  suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000
+                ).toFixed(0)}
+                K
+              </div>
+              <p className="text-xs text-muted-foreground">All time</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Flagged Suppliers
+              </CardTitle>
+              <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                {suppliers.filter((s) => s.status === "flagged").length}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Requires attention
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Supplier Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CardTitle>All Suppliers</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search suppliers..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+      <div className="max-w-7xl mx-auto">
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <CardTitle>All Suppliers</CardTitle>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search suppliers..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value: any) => setStatusFilter(value)}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="flagged">Flagged</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select
-                value={statusFilter}
-                onValueChange={(value: any) => setStatusFilter(value)}
-              >
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="flagged">Flagged</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Supplier ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Contact
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Category
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Total Orders
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Last Order
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredSuppliers.map((supplier) => (
-                  <tr
-                    key={supplier.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">
-                      {supplier.id}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {supplier.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {supplier.contactPerson}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div>
-                        <p className="text-sm text-foreground">
-                          {supplier.email}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {supplier.phone}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {supplier.category}
-                    </td>
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">
-                      {supplier.totalOrders}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-foreground">
-                      {supplier.lastOrderDate}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={getStatusBadge(supplier.status).variant}
-                        className={getStatusBadge(supplier.status).className}
-                      >
-                        {supplier.status.toUpperCase()}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex gap-1">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setSelectedSupplier(supplier)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>
-                                Supplier Details - {supplier.name}
-                              </DialogTitle>
-                              <DialogDescription>
-                                Complete supplier information and performance
-                                history
-                              </DialogDescription>
-                            </DialogHeader>
-                            {selectedSupplier && (
-                              <Tabs defaultValue="info" className="space-y-4">
-                                <TabsList>
-                                  <TabsTrigger value="info">
-                                    Information
-                                  </TabsTrigger>
-                                  <TabsTrigger value="performance">
-                                    Performance
-                                  </TabsTrigger>
-                                  <TabsTrigger value="history">
-                                    Purchase History
-                                  </TabsTrigger>
-                                </TabsList>
-
-                                <TabsContent value="info" className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Supplier ID
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.id}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Status
-                                      </Label>
-                                      <div className="mt-1">
-                                        <Badge
-                                          variant={
-                                            getStatusBadge(
-                                              selectedSupplier.status
-                                            ).variant
-                                          }
-                                          className={
-                                            getStatusBadge(
-                                              selectedSupplier.status
-                                            ).className
-                                          }
-                                        >
-                                          {selectedSupplier.status.toUpperCase()}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Company Name
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.name}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Contact Person
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.contactPerson}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Email
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.email}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Phone
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.phone}
-                                      </p>
-                                    </div>
-                                    <div className="col-span-2">
-                                      <Label className="text-muted-foreground">
-                                        Address
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.address}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Category
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.category}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Payment Terms
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.paymentTerms}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Registered Since
-                                      </Label>
-                                      <p className="font-medium">
-                                        {selectedSupplier.registeredDate}
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  {selectedSupplier.notes && (
-                                    <div>
-                                      <Label className="text-muted-foreground">
-                                        Notes
-                                      </Label>
-                                      <p className="mt-1 text-sm">
-                                        {selectedSupplier.notes}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  <div className="flex gap-2 pt-4 border-t">
-                                    <Button
-                                      size="sm"
-                                      onClick={() =>
-                                        startEdit(selectedSupplier)
-                                      }
-                                    >
-                                      <Edit className="h-4 w-4 mr-2" />
-                                      Edit Details
-                                    </Button>
-                                    {selectedSupplier.status === "active" && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() =>
-                                          toggleSupplierStatus(
-                                            selectedSupplier.id,
-                                            "flagged"
-                                          )
-                                        }
-                                      >
-                                        <AlertCircle className="h-4 w-4 mr-2" />
-                                        Flag Supplier
-                                      </Button>
-                                    )}
-                                    {selectedSupplier.status === "flagged" && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() =>
-                                          toggleSupplierStatus(
-                                            selectedSupplier.id,
-                                            "active"
-                                          )
-                                        }
-                                      >
-                                        Remove Flag
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TabsContent>
-
-                                <TabsContent
-                                  value="performance"
-                                  className="space-y-4"
-                                >
-                                  <div className="grid gap-4 md:grid-cols-2">
-                                    <Card>
-                                      <CardHeader>
-                                        <CardTitle className="text-sm">
-                                          Overall Performance Score
-                                        </CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <div
-                                          className={`text-3xl font-bold ${getPerformanceColor(
-                                            selectedSupplier.performanceScore
-                                          )}`}
-                                        >
-                                          {selectedSupplier.performanceScore}%
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                    <Card>
-                                      <CardHeader>
-                                        <CardTitle className="text-sm">
-                                          On-Time Delivery Rate
-                                        </CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <div className="text-3xl font-bold">
-                                          {selectedSupplier.onTimeDeliveryRate}%
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                    <Card>
-                                      <CardHeader>
-                                        <CardTitle className="text-sm">
-                                          Quality Rating
-                                        </CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-3xl font-bold">
-                                            {selectedSupplier.qualityRating}
-                                          </span>
-                                          <div className="flex">
-                                            {[...Array(5)].map((_, i) => (
-                                              <Star
-                                                key={i}
-                                                className={`h-5 w-5 ${
-                                                  i <
-                                                  Math.round(
-                                                    selectedSupplier.qualityRating
-                                                  )
-                                                    ? "fill-yellow-400 text-yellow-400"
-                                                    : "text-gray-300"
-                                                }`}
-                                              />
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                    <Card>
-                                      <CardHeader>
-                                        <CardTitle className="text-sm">
-                                          Avg Delivery Time
-                                        </CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <div className="text-3xl font-bold">
-                                          {selectedSupplier.averageDeliveryTime}
-                                          <span className="text-lg text-muted-foreground ml-1">
-                                            days
-                                          </span>
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                  </div>
-
-                                  <div className="grid gap-4 md:grid-cols-2">
-                                    <div className="border rounded-lg p-4">
-                                      <Label className="text-muted-foreground">
-                                        Total Orders
-                                      </Label>
-                                      <p className="text-2xl font-bold mt-1">
-                                        {selectedSupplier.totalOrders}
-                                      </p>
-                                    </div>
-                                    <div className="border rounded-lg p-4">
-                                      <Label className="text-muted-foreground">
-                                        Total Spent
-                                      </Label>
-                                      <p className="text-2xl font-bold mt-1">
-                                        LKR{" "}
-                                        {selectedSupplier.totalSpent.toLocaleString()}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </TabsContent>
-
-                                <TabsContent
-                                  value="history"
-                                  className="space-y-4"
-                                >
-                                  <div>
-                                    <Label className="text-muted-foreground">
-                                      Recent Purchase Orders
-                                    </Label>
-                                    {mockPurchaseHistory[selectedSupplier.id]
-                                      ?.length > 0 ? (
-                                      <div className="mt-2 border rounded-lg overflow-hidden">
-                                        <table className="w-full">
-                                          <thead className="bg-muted">
-                                            <tr>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">
-                                                PO ID
-                                              </th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">
-                                                Date
-                                              </th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">
-                                                Items
-                                              </th>
-                                              <th className="text-right py-2 px-3 text-sm font-medium">
-                                                Amount (LKR)
-                                              </th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">
-                                                Delivery
-                                              </th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">
-                                                Quality
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {mockPurchaseHistory[
-                                              selectedSupplier.id
-                                            ].map((history, idx) => (
-                                              <tr
-                                                key={idx}
-                                                className="border-t"
-                                              >
-                                                <td className="py-2 px-3 text-sm font-medium">
-                                                  {history.poId}
-                                                </td>
-                                                <td className="py-2 px-3 text-sm">
-                                                  {history.date}
-                                                </td>
-                                                <td className="py-2 px-3 text-sm">
-                                                  {history.items.join(", ")}
-                                                </td>
-                                                <td className="py-2 px-3 text-sm text-right">
-                                                  LKR{" "}
-                                                  {history.amount.toLocaleString()}
-                                                </td>
-                                                <td className="py-2 px-3">
-                                                  <Badge
-                                                    variant={
-                                                      getDeliveryStatusBadge(
-                                                        history.deliveryStatus
-                                                      ).variant
-                                                    }
-                                                    className={
-                                                      getDeliveryStatusBadge(
-                                                        history.deliveryStatus
-                                                      ).className
-                                                    }
-                                                  >
-                                                    {history.deliveryStatus}
-                                                  </Badge>
-                                                </td>
-                                                <td className="py-2 px-3">
-                                                  <div className="flex">
-                                                    {[...Array(5)].map(
-                                                      (_, i) => (
-                                                        <Star
-                                                          key={i}
-                                                          className={`h-3 w-3 ${
-                                                            i <
-                                                            history.qualityRating
-                                                              ? "fill-yellow-400 text-yellow-400"
-                                                              : "text-gray-300"
-                                                          }`}
-                                                        />
-                                                      )
-                                                    )}
-                                                  </div>
-                                                </td>
-                                              </tr>
-                                            ))}
-                                          </tbody>
-                                        </table>
-                                      </div>
-                                    ) : (
-                                      <p className="text-sm text-muted-foreground mt-2">
-                                        No purchase history available
-                                      </p>
-                                    )}
-                                  </div>
-                                </TabsContent>
-                              </Tabs>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => startEdit(supplier)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Supplier ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Name
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Contact
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Category
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Total Orders
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Last Order
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                </thead>
+                <tbody>
+                  {filteredSuppliers.map((supplier) => (
+                    <tr
+                      key={supplier.id}
+                      className="border-b border-border last:border-0"
+                    >
+                      <td className="py-3 px-4 text-sm font-medium text-foreground">
+                        {supplier.id}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            {supplier.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {supplier.contactPerson}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div>
+                          <p className="text-sm text-foreground">
+                            {supplier.email}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {supplier.phone}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {supplier.category}
+                      </td>
+                      <td className="py-3 px-4 text-sm font-medium text-foreground">
+                        {supplier.totalOrders}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-foreground">
+                        {supplier.lastOrderDate}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          variant={getStatusBadge(supplier.status).variant}
+                          className={getStatusBadge(supplier.status).className}
+                        >
+                          {supplier.status.toUpperCase()}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex gap-1">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setSelectedSupplier(supplier)}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Supplier Details - {supplier.name}
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Complete supplier information and performance
+                                  history
+                                </DialogDescription>
+                              </DialogHeader>
+                              {selectedSupplier && (
+                                <Tabs defaultValue="info" className="space-y-4">
+                                  <TabsList>
+                                    <TabsTrigger value="info">
+                                      Information
+                                    </TabsTrigger>
+                                    <TabsTrigger value="performance">
+                                      Performance
+                                    </TabsTrigger>
+                                    <TabsTrigger value="history">
+                                      Purchase History
+                                    </TabsTrigger>
+                                  </TabsList>
+
+                                  <TabsContent
+                                    value="info"
+                                    className="space-y-4"
+                                  >
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Supplier ID
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.id}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Status
+                                        </Label>
+                                        <div className="mt-1">
+                                          <Badge
+                                            variant={
+                                              getStatusBadge(
+                                                selectedSupplier.status
+                                              ).variant
+                                            }
+                                            className={
+                                              getStatusBadge(
+                                                selectedSupplier.status
+                                              ).className
+                                            }
+                                          >
+                                            {selectedSupplier.status.toUpperCase()}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Company Name
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.name}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Contact Person
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.contactPerson}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Email
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.email}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Phone
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.phone}
+                                        </p>
+                                      </div>
+                                      <div className="col-span-2">
+                                        <Label className="text-muted-foreground">
+                                          Address
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.address}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Category
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.category}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Payment Terms
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.paymentTerms}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Registered Since
+                                        </Label>
+                                        <p className="font-medium">
+                                          {selectedSupplier.registeredDate}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {selectedSupplier.notes && (
+                                      <div>
+                                        <Label className="text-muted-foreground">
+                                          Notes
+                                        </Label>
+                                        <p className="mt-1 text-sm">
+                                          {selectedSupplier.notes}
+                                        </p>
+                                      </div>
+                                    )}
+
+                                    <div className="flex gap-2 pt-4 border-t">
+                                      <Button
+                                        size="sm"
+                                        onClick={() =>
+                                          startEdit(selectedSupplier)
+                                        }
+                                      >
+                                        <Edit className="h-4 w-4 mr-2" />
+                                        Edit Details
+                                      </Button>
+                                      {selectedSupplier.status === "active" && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() =>
+                                            toggleSupplierStatus(
+                                              selectedSupplier.id,
+                                              "flagged"
+                                            )
+                                          }
+                                        >
+                                          <AlertCircle className="h-4 w-4 mr-2" />
+                                          Flag Supplier
+                                        </Button>
+                                      )}
+                                      {selectedSupplier.status ===
+                                        "flagged" && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() =>
+                                            toggleSupplierStatus(
+                                              selectedSupplier.id,
+                                              "active"
+                                            )
+                                          }
+                                        >
+                                          Remove Flag
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </TabsContent>
+
+                                  <TabsContent
+                                    value="performance"
+                                    className="space-y-4"
+                                  >
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-sm">
+                                            Overall Performance Score
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div
+                                            className={`text-3xl font-bold ${getPerformanceColor(
+                                              selectedSupplier.performanceScore
+                                            )}`}
+                                          >
+                                            {selectedSupplier.performanceScore}%
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-sm">
+                                            On-Time Delivery Rate
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="text-3xl font-bold">
+                                            {
+                                              selectedSupplier.onTimeDeliveryRate
+                                            }
+                                            %
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-sm">
+                                            Quality Rating
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-3xl font-bold">
+                                              {selectedSupplier.qualityRating}
+                                            </span>
+                                            <div className="flex">
+                                              {[...Array(5)].map((_, i) => (
+                                                <Star
+                                                  key={i}
+                                                  className={`h-5 w-5 ${
+                                                    i <
+                                                    Math.round(
+                                                      selectedSupplier.qualityRating
+                                                    )
+                                                      ? "fill-yellow-400 text-yellow-400"
+                                                      : "text-gray-300"
+                                                  }`}
+                                                />
+                                              ))}
+                                            </div>
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-sm">
+                                            Avg Delivery Time
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="text-3xl font-bold">
+                                            {
+                                              selectedSupplier.averageDeliveryTime
+                                            }
+                                            <span className="text-lg text-muted-foreground ml-1">
+                                              days
+                                            </span>
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                    </div>
+
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      <div className="border rounded-lg p-4">
+                                        <Label className="text-muted-foreground">
+                                          Total Orders
+                                        </Label>
+                                        <p className="text-2xl font-bold mt-1">
+                                          {selectedSupplier.totalOrders}
+                                        </p>
+                                      </div>
+                                      <div className="border rounded-lg p-4">
+                                        <Label className="text-muted-foreground">
+                                          Total Spent
+                                        </Label>
+                                        <p className="text-2xl font-bold mt-1">
+                                          LKR{" "}
+                                          {selectedSupplier.totalSpent.toLocaleString()}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </TabsContent>
+
+                                  <TabsContent
+                                    value="history"
+                                    className="space-y-4"
+                                  >
+                                    <div>
+                                      <Label className="text-muted-foreground">
+                                        Recent Purchase Orders
+                                      </Label>
+                                      {mockPurchaseHistory[selectedSupplier.id]
+                                        ?.length > 0 ? (
+                                        <div className="mt-2 border rounded-lg overflow-hidden">
+                                          <table className="w-full">
+                                            <thead className="bg-muted">
+                                              <tr>
+                                                <th className="text-left py-2 px-3 text-sm font-medium">
+                                                  PO ID
+                                                </th>
+                                                <th className="text-left py-2 px-3 text-sm font-medium">
+                                                  Date
+                                                </th>
+                                                <th className="text-left py-2 px-3 text-sm font-medium">
+                                                  Items
+                                                </th>
+                                                <th className="text-right py-2 px-3 text-sm font-medium">
+                                                  Amount (LKR)
+                                                </th>
+                                                <th className="text-left py-2 px-3 text-sm font-medium">
+                                                  Delivery
+                                                </th>
+                                                <th className="text-left py-2 px-3 text-sm font-medium">
+                                                  Quality
+                                                </th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {mockPurchaseHistory[
+                                                selectedSupplier.id
+                                              ].map((history, idx) => (
+                                                <tr
+                                                  key={idx}
+                                                  className="border-t"
+                                                >
+                                                  <td className="py-2 px-3 text-sm font-medium">
+                                                    {history.poId}
+                                                  </td>
+                                                  <td className="py-2 px-3 text-sm">
+                                                    {history.date}
+                                                  </td>
+                                                  <td className="py-2 px-3 text-sm">
+                                                    {history.items.join(", ")}
+                                                  </td>
+                                                  <td className="py-2 px-3 text-sm text-right">
+                                                    LKR{" "}
+                                                    {history.amount.toLocaleString()}
+                                                  </td>
+                                                  <td className="py-2 px-3">
+                                                    <Badge
+                                                      variant={
+                                                        getDeliveryStatusBadge(
+                                                          history.deliveryStatus
+                                                        ).variant
+                                                      }
+                                                      className={
+                                                        getDeliveryStatusBadge(
+                                                          history.deliveryStatus
+                                                        ).className
+                                                      }
+                                                    >
+                                                      {history.deliveryStatus}
+                                                    </Badge>
+                                                  </td>
+                                                  <td className="py-2 px-3">
+                                                    <div className="flex">
+                                                      {[...Array(5)].map(
+                                                        (_, i) => (
+                                                          <Star
+                                                            key={i}
+                                                            className={`h-3 w-3 ${
+                                                              i <
+                                                              history.qualityRating
+                                                                ? "fill-yellow-400 text-yellow-400"
+                                                                : "text-gray-300"
+                                                            }`}
+                                                          />
+                                                        )
+                                                      )}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      ) : (
+                                        <p className="text-sm text-muted-foreground mt-2">
+                                          No purchase history available
+                                        </p>
+                                      )}
+                                    </div>
+                                  </TabsContent>
+                                </Tabs>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => startEdit(supplier)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Add/Edit Supplier Dialog */}
       <Dialog
