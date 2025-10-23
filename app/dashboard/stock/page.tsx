@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, Plus, ShoppingCart } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, Plus, ShoppingCart } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const generateMockStock = () => {
   const items = [
@@ -22,7 +28,7 @@ const generateMockStock = () => {
     "Cetirizine 10mg",
     "Ranitidine 150mg",
     "Diclofenac 50mg",
-  ]
+  ];
   const locations = [
     "Shelf A1",
     "Shelf A2",
@@ -32,7 +38,7 @@ const generateMockStock = () => {
     "Shelf C2",
     "Cold Storage",
     "Warehouse",
-  ]
+  ];
 
   return items.map((item, index) => ({
     id: `STK-${String(index + 1).padStart(3, "0")}`,
@@ -41,44 +47,51 @@ const generateMockStock = () => {
     location: locations[Math.floor(Math.random() * locations.length)],
     status: Math.random() > 0.7 ? "low" : "normal",
     reorderLevel: 100,
-  }))
-}
+  }));
+};
 
 export default function StockPage() {
-  const [stock, setStock] = useState(generateMockStock())
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterLocation, setFilterLocation] = useState("all")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
+  const [stock, setStock] = useState(generateMockStock());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterLocation, setFilterLocation] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredStock = stock.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.id.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesLocation = filterLocation === "all" || item.location === filterLocation
-    const matchesStatus = filterStatus === "all" || item.status === filterStatus
-    return matchesSearch && matchesLocation && matchesStatus
-  })
+      item.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLocation =
+      filterLocation === "all" || item.location === filterLocation;
+    const matchesStatus =
+      filterStatus === "all" || item.status === filterStatus;
+    return matchesSearch && matchesLocation && matchesStatus;
+  });
 
-  const totalPages = Math.ceil(filteredStock.length / itemsPerPage)
-  const paginatedStock = filteredStock.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const totalPages = Math.ceil(filteredStock.length / itemsPerPage);
+  const paginatedStock = filteredStock.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-  const locations = [...new Set(stock.map((item) => item.location))]
+  const locations = [...new Set(stock.map((item) => item.location))];
 
   const handleOrderRequest = (item: any) => {
-    alert(`Order request submitted for:\n\nItem: ${item.name}\nCurrent Stock: ${item.quantity}\nReorder Level: ${item.reorderLevel}\n\nThis would navigate to the Purchase Orders page in production.`)
+    alert(
+      `Order request submitted for:\n\nItem: ${item.name}\nCurrent Stock: ${item.quantity}\nReorder Level: ${item.reorderLevel}\n\nThis would navigate to the Purchase Orders page in production.`
+    );
     // In production, this would redirect to /dashboard/procurement with pre-filled data
     // or open a modal to create a new PO
-  }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Stock Control</h1>
-          <p className="text-muted-foreground mt-1">Monitor and manage inventory levels</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+          Stock Control
+        </h3>
+
         <Button>
           <Plus className="h-4 w-4 mr-2" />
           Add Stock
@@ -89,15 +102,21 @@ export default function StockPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Items
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{stock.length}</div>
+            <div className="text-2xl font-bold text-foreground">
+              {stock.length}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Low Stock Items
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600 dark:text-red-400">
@@ -107,11 +126,15 @@ export default function StockPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Quantity</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Quantity
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">
-              {stock.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()}
+              {stock
+                .reduce((sum, item) => sum + item.quantity, 0)
+                .toLocaleString()}
             </div>
           </CardContent>
         </Card>
@@ -162,23 +185,50 @@ export default function StockPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Item ID</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Item Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Quantity</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Location</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Item ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Item Name
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Quantity
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Location
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedStock.map((item) => (
-                  <tr key={item.id} className="border-b border-border last:border-0">
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">{item.id}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{item.name}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{item.quantity}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{item.location}</td>
+                  <tr
+                    key={item.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">
+                      {item.id}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {item.name}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {item.quantity}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {item.location}
+                    </td>
                     <td className="py-3 px-4">
-                      <Badge variant={item.status === "low" ? "destructive" : "default"}>
+                      <Badge
+                        variant={
+                          item.status === "low" ? "destructive" : "default"
+                        }
+                      >
                         {item.status === "low" ? "Low Stock" : "Normal"}
                       </Badge>
                     </td>
@@ -188,7 +238,11 @@ export default function StockPage() {
                           Update
                         </Button>
                         {item.status === "low" && (
-                          <Button size="sm" variant="default" onClick={() => handleOrderRequest(item)}>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleOrderRequest(item)}
+                          >
                             <ShoppingCart className="h-4 w-4 mr-1" />
                             Order
                           </Button>
@@ -205,7 +259,8 @@ export default function StockPage() {
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-              {Math.min(currentPage * itemsPerPage, filteredStock.length)} of {filteredStock.length} items
+              {Math.min(currentPage * itemsPerPage, filteredStock.length)} of{" "}
+              {filteredStock.length} items
             </p>
             <div className="flex gap-2">
               <Button
@@ -219,7 +274,9 @@ export default function StockPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -229,5 +286,5 @@ export default function StockPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
