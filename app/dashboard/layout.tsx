@@ -19,6 +19,9 @@ import {
   Bell,
   Mail,
   User,
+  FileText,
+  PackageCheck,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 import {
