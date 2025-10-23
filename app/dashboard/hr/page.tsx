@@ -1,18 +1,42 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, UserPlus } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, UserPlus } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const roles = ["Pharmacist", "Manager", "Medical Rep", "Admin", "Cashier", "Stock Keeper"]
-const departments = ["Pharmacy", "Administration", "Sales", "Inventory", "HR"]
+const roles = [
+  "Pharmacist",
+  "Manager",
+  "Medical Rep",
+  "Admin",
+  "Cashier",
+  "Stock Keeper",
+];
+const departments = ["Pharmacy", "Administration", "Sales", "Inventory", "HR"];
 
 const generateMockEmployees = () => {
-  const firstNames = ["Nimal", "Saman", "Kumari", "Priya", "Rajesh", "Dilini", "Kasun", "Sanduni", "Amal", "Thilini"]
+  const firstNames = [
+    "Nimal",
+    "Saman",
+    "Kumari",
+    "Priya",
+    "Rajesh",
+    "Dilini",
+    "Kasun",
+    "Sanduni",
+    "Amal",
+    "Thilini",
+  ];
   const lastNames = [
     "Silva",
     "Fernando",
@@ -22,56 +46,68 @@ const generateMockEmployees = () => {
     "Gunasekara",
     "Dissanayake",
     "Mendis",
-  ]
+  ];
 
   return Array.from({ length: 48 }, (_, i) => ({
     id: `EMP-${String(i + 1).padStart(3, "0")}`,
-    name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
+    name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${
+      lastNames[Math.floor(Math.random() * lastNames.length)]
+    }`,
     role: roles[Math.floor(Math.random() * roles.length)],
     department: departments[Math.floor(Math.random() * departments.length)],
     status: Math.random() > 0.1 ? "active" : "inactive",
-    pendingApprovals: Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 0,
-  }))
-}
+    pendingApprovals:
+      Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 0,
+  }));
+};
 
 export default function HRPage() {
-  const [employees, setEmployees] = useState(generateMockEmployees())
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterRole, setFilterRole] = useState("all")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [user, setUser] = useState<any>(null)
+  const [employees, setEmployees] = useState(generateMockEmployees());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      setUser(JSON.parse(storedUser));
     }
-  }, [])
+  }, []);
 
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.id.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesRole = filterRole === "all" || emp.role === filterRole
-    const matchesStatus = filterStatus === "all" || emp.status === filterStatus
+      emp.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === "all" || emp.role === filterRole;
+    const matchesStatus = filterStatus === "all" || emp.status === filterStatus;
 
     // Managers only see their department
     if (user?.role === "manager") {
-      return matchesSearch && matchesRole && matchesStatus && emp.department === "Pharmacy"
+      return (
+        matchesSearch &&
+        matchesRole &&
+        matchesStatus &&
+        emp.department === "Pharmacy"
+      );
     }
 
-    return matchesSearch && matchesRole && matchesStatus
-  })
+    return matchesSearch && matchesRole && matchesStatus;
+  });
 
-  const totalPendingApprovals = employees.reduce((sum, emp) => sum + emp.pendingApprovals, 0)
+  const totalPendingApprovals = employees.reduce(
+    (sum, emp) => sum + emp.pendingApprovals,
+    0
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">HR Management</h1>
-          <p className="text-muted-foreground mt-1">Manage employees and approvals</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        
+          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+            HR
+          </h3>
+        
         {user?.role === "admin" && (
           <Button>
             <UserPlus className="h-4 w-4 mr-2" />
@@ -84,15 +120,21 @@ export default function HRPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Employees</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Employees
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{employees.length}</div>
+            <div className="text-2xl font-bold text-foreground">
+              {employees.length}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Active
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -102,7 +144,9 @@ export default function HRPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inactive</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Inactive
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-muted-foreground">
@@ -112,10 +156,14 @@ export default function HRPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Approvals</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Pending Approvals
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{totalPendingApprovals}</div>
+            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+              {totalPendingApprovals}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -165,28 +213,61 @@ export default function HRPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Employee ID</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Role</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Department</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Approvals</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Employee ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Name
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Role
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Department
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Approvals
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEmployees.map((employee) => (
-                  <tr key={employee.id} className="border-b border-border last:border-0">
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">{employee.id}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{employee.name}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{employee.role}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{employee.department}</td>
+                  <tr
+                    key={employee.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">
+                      {employee.id}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {employee.name}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {employee.role}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {employee.department}
+                    </td>
                     <td className="py-3 px-4">
-                      <Badge variant={employee.status === "active" ? "default" : "secondary"}>{employee.status}</Badge>
+                      <Badge
+                        variant={
+                          employee.status === "active" ? "default" : "secondary"
+                        }
+                      >
+                        {employee.status}
+                      </Badge>
                     </td>
                     <td className="py-3 px-4">
                       {employee.pendingApprovals > 0 && (
-                        <Badge variant="outline">{employee.pendingApprovals} pending</Badge>
+                        <Badge variant="outline">
+                          {employee.pendingApprovals} pending
+                        </Badge>
                       )}
                     </td>
                     <td className="py-3 px-4">
@@ -202,5 +283,5 @@ export default function HRPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

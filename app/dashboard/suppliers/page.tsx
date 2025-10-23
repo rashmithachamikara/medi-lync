@@ -1,47 +1,75 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, Plus, Edit, Star, AlertCircle, Package, DollarSign, Eye } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Search,
+  Plus,
+  Edit,
+  Star,
+  AlertCircle,
+  Package,
+  DollarSign,
+  Eye,
+} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Supplier {
-  id: string
-  name: string
-  contactPerson: string
-  email: string
-  phone: string
-  address: string
-  paymentTerms: string
-  category: string
-  status: "active" | "inactive" | "flagged"
-  performanceScore: number
-  onTimeDeliveryRate: number
-  qualityRating: number
-  totalOrders: number
-  totalSpent: number
-  averageDeliveryTime: number
-  lastOrderDate: string
-  notes: string
-  registeredDate: string
+  id: string;
+  name: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address: string;
+  paymentTerms: string;
+  category: string;
+  status: "active" | "inactive" | "flagged";
+  performanceScore: number;
+  onTimeDeliveryRate: number;
+  qualityRating: number;
+  totalOrders: number;
+  totalSpent: number;
+  averageDeliveryTime: number;
+  lastOrderDate: string;
+  notes: string;
+  registeredDate: string;
 }
 
 interface PurchaseHistory {
-  poId: string
-  date: string
-  items: string[]
-  amount: number
-  deliveryStatus: "on-time" | "late" | "early"
-  qualityRating: number
+  poId: string;
+  date: string;
+  items: string[];
+  amount: number;
+  deliveryStatus: "on-time" | "late" | "early";
+  qualityRating: number;
 }
 
 const mockSuppliers: Supplier[] = [
@@ -125,7 +153,7 @@ const mockSuppliers: Supplier[] = [
     notes: "Frequent quality issues, multiple late deliveries. Under review.",
     registeredDate: "2024-06-05",
   },
-]
+];
 
 const mockPurchaseHistory: Record<string, PurchaseHistory[]> = {
   "SUP-001": [
@@ -167,15 +195,19 @@ const mockPurchaseHistory: Record<string, PurchaseHistory[]> = {
     },
   ],
   "SUP-004": [],
-}
+};
 
 export default function SuppliersPage() {
-  const [suppliers, setSuppliers] = useState(mockSuppliers)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "flagged">("all")
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
-  const [editMode, setEditMode] = useState(false)
+  const [suppliers, setSuppliers] = useState(mockSuppliers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive" | "flagged"
+  >("all");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
+    null
+  );
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Supplier>>({
     name: "",
     contactPerson: "",
@@ -185,7 +217,7 @@ export default function SuppliersPage() {
     paymentTerms: "Net 30",
     category: "Pharmaceuticals",
     notes: "",
-  })
+  });
 
   const resetForm = () => {
     setFormData({
@@ -197,12 +229,12 @@ export default function SuppliersPage() {
       paymentTerms: "Net 30",
       category: "Pharmaceuticals",
       notes: "",
-    })
-    setEditMode(false)
-  }
+    });
+    setEditMode(false);
+  };
 
   const handleAddSupplier = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const newSupplier: Supplier = {
       id: `SUP-${String(suppliers.length + 1).padStart(3, "0")}`,
       name: formData.name!,
@@ -222,15 +254,15 @@ export default function SuppliersPage() {
       lastOrderDate: "-",
       notes: formData.notes || "",
       registeredDate: new Date().toISOString().split("T")[0],
-    }
-    setSuppliers([newSupplier, ...suppliers])
-    setShowAddForm(false)
-    resetForm()
-  }
+    };
+    setSuppliers([newSupplier, ...suppliers]);
+    setShowAddForm(false);
+    resetForm();
+  };
 
   const handleEditSupplier = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedSupplier) return
+    e.preventDefault();
+    if (!selectedSupplier) return;
 
     setSuppliers(
       suppliers.map((s) =>
@@ -246,15 +278,15 @@ export default function SuppliersPage() {
               category: formData.category!,
               notes: formData.notes!,
             }
-          : s,
-      ),
-    )
-    setEditMode(false)
-    resetForm()
-  }
+          : s
+      )
+    );
+    setEditMode(false);
+    resetForm();
+  };
 
   const startEdit = (supplier: Supplier) => {
-    setSelectedSupplier(supplier)
+    setSelectedSupplier(supplier);
     setFormData({
       name: supplier.name,
       contactPerson: supplier.contactPerson,
@@ -264,57 +296,66 @@ export default function SuppliersPage() {
       paymentTerms: supplier.paymentTerms,
       category: supplier.category,
       notes: supplier.notes,
-    })
-    setEditMode(true)
-  }
+    });
+    setEditMode(true);
+  };
 
-  const toggleSupplierStatus = (supplierId: string, newStatus: "active" | "inactive" | "flagged") => {
-    setSuppliers(suppliers.map((s) => (s.id === supplierId ? { ...s, status: newStatus } : s)))
-  }
+  const toggleSupplierStatus = (
+    supplierId: string,
+    newStatus: "active" | "inactive" | "flagged"
+  ) => {
+    setSuppliers(
+      suppliers.map((s) =>
+        s.id === supplierId ? { ...s, status: newStatus } : s
+      )
+    );
+  };
 
   const filteredSuppliers = suppliers.filter((supplier) => {
     const matchesSearch =
       supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       supplier.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
       supplier.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.id.toLowerCase().includes(searchTerm.toLowerCase())
+      supplier.id.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || supplier.status === statusFilter
+    const matchesStatus =
+      statusFilter === "all" || supplier.status === statusFilter;
 
-    return matchesSearch && matchesStatus
-  })
+    return matchesSearch && matchesStatus;
+  });
 
   const getPerformanceColor = (score: number) => {
-    if (score >= 90) return "text-green-600"
-    if (score >= 75) return "text-yellow-600"
-    return "text-red-600"
-  }
+    if (score >= 90) return "text-green-600";
+    if (score >= 75) return "text-yellow-600";
+    return "text-red-600";
+  };
 
   const getStatusBadge = (status: "active" | "inactive" | "flagged") => {
     const variants = {
       active: { variant: "default" as const, className: "bg-green-500" },
       inactive: { variant: "secondary" as const, className: "bg-gray-500" },
       flagged: { variant: "destructive" as const, className: "bg-red-500" },
-    }
-    return variants[status]
-  }
+    };
+    return variants[status];
+  };
 
   const getDeliveryStatusBadge = (status: "on-time" | "late" | "early") => {
     const variants = {
       "on-time": { variant: "default" as const, className: "bg-green-500" },
       late: { variant: "destructive" as const, className: "bg-red-500" },
       early: { variant: "default" as const, className: "bg-blue-500" },
-    }
-    return variants[status]
-  }
+    };
+    return variants[status];
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Supplier Management</h1>
-          <p className="text-muted-foreground mt-1">Manage supplier database and track performance metrics</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        
+          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+            Supplier Management
+          </h3>
+        
         <Button onClick={() => setShowAddForm(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Supplier
@@ -325,7 +366,9 @@ export default function SuppliersPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Suppliers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Suppliers
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -342,14 +385,20 @@ export default function SuppliersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              LKR {(suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000).toFixed(0)}K
+              LKR{" "}
+              {(
+                suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000
+              ).toFixed(0)}
+              K
             </div>
             <p className="text-xs text-muted-foreground">All time</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Flagged Suppliers</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Flagged Suppliers
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -376,7 +425,10 @@ export default function SuppliersPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value: any) => setStatusFilter(value)}
+              >
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -395,35 +447,70 @@ export default function SuppliersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Supplier ID</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Contact</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Category</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Orders</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Last Order</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Supplier ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Name
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Contact
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Category
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Total Orders
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Last Order
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredSuppliers.map((supplier) => (
-                  <tr key={supplier.id} className="border-b border-border last:border-0">
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">{supplier.id}</td>
+                  <tr
+                    key={supplier.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">
+                      {supplier.id}
+                    </td>
                     <td className="py-3 px-4">
                       <div>
-                        <p className="text-sm font-medium text-foreground">{supplier.name}</p>
-                        <p className="text-xs text-muted-foreground">{supplier.contactPerson}</p>
+                        <p className="text-sm font-medium text-foreground">
+                          {supplier.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {supplier.contactPerson}
+                        </p>
                       </div>
                     </td>
                     <td className="py-3 px-4">
                       <div>
-                        <p className="text-sm text-foreground">{supplier.email}</p>
-                        <p className="text-xs text-muted-foreground">{supplier.phone}</p>
+                        <p className="text-sm text-foreground">
+                          {supplier.email}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {supplier.phone}
+                        </p>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm text-foreground">{supplier.category}</td>
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">{supplier.totalOrders}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{supplier.lastOrderDate}</td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {supplier.category}
+                    </td>
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">
+                      {supplier.totalOrders}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {supplier.lastOrderDate}
+                    </td>
                     <td className="py-3 px-4">
                       <Badge
                         variant={getStatusBadge(supplier.status).variant}
@@ -436,83 +523,153 @@ export default function SuppliersPage() {
                       <div className="flex gap-1">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" onClick={() => setSelectedSupplier(supplier)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedSupplier(supplier)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
-                              <DialogTitle>Supplier Details - {supplier.name}</DialogTitle>
-                              <DialogDescription>Complete supplier information and performance history</DialogDescription>
+                              <DialogTitle>
+                                Supplier Details - {supplier.name}
+                              </DialogTitle>
+                              <DialogDescription>
+                                Complete supplier information and performance
+                                history
+                              </DialogDescription>
                             </DialogHeader>
                             {selectedSupplier && (
                               <Tabs defaultValue="info" className="space-y-4">
                                 <TabsList>
-                                  <TabsTrigger value="info">Information</TabsTrigger>
-                                  <TabsTrigger value="performance">Performance</TabsTrigger>
-                                  <TabsTrigger value="history">Purchase History</TabsTrigger>
+                                  <TabsTrigger value="info">
+                                    Information
+                                  </TabsTrigger>
+                                  <TabsTrigger value="performance">
+                                    Performance
+                                  </TabsTrigger>
+                                  <TabsTrigger value="history">
+                                    Purchase History
+                                  </TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="info" className="space-y-4">
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <Label className="text-muted-foreground">Supplier ID</Label>
-                                      <p className="font-medium">{selectedSupplier.id}</p>
+                                      <Label className="text-muted-foreground">
+                                        Supplier ID
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.id}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Status</Label>
+                                      <Label className="text-muted-foreground">
+                                        Status
+                                      </Label>
                                       <div className="mt-1">
                                         <Badge
-                                          variant={getStatusBadge(selectedSupplier.status).variant}
-                                          className={getStatusBadge(selectedSupplier.status).className}
+                                          variant={
+                                            getStatusBadge(
+                                              selectedSupplier.status
+                                            ).variant
+                                          }
+                                          className={
+                                            getStatusBadge(
+                                              selectedSupplier.status
+                                            ).className
+                                          }
                                         >
                                           {selectedSupplier.status.toUpperCase()}
                                         </Badge>
                                       </div>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Company Name</Label>
-                                      <p className="font-medium">{selectedSupplier.name}</p>
+                                      <Label className="text-muted-foreground">
+                                        Company Name
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.name}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Contact Person</Label>
-                                      <p className="font-medium">{selectedSupplier.contactPerson}</p>
+                                      <Label className="text-muted-foreground">
+                                        Contact Person
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.contactPerson}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Email</Label>
-                                      <p className="font-medium">{selectedSupplier.email}</p>
+                                      <Label className="text-muted-foreground">
+                                        Email
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.email}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Phone</Label>
-                                      <p className="font-medium">{selectedSupplier.phone}</p>
+                                      <Label className="text-muted-foreground">
+                                        Phone
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.phone}
+                                      </p>
                                     </div>
                                     <div className="col-span-2">
-                                      <Label className="text-muted-foreground">Address</Label>
-                                      <p className="font-medium">{selectedSupplier.address}</p>
+                                      <Label className="text-muted-foreground">
+                                        Address
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.address}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Category</Label>
-                                      <p className="font-medium">{selectedSupplier.category}</p>
+                                      <Label className="text-muted-foreground">
+                                        Category
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.category}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Payment Terms</Label>
-                                      <p className="font-medium">{selectedSupplier.paymentTerms}</p>
+                                      <Label className="text-muted-foreground">
+                                        Payment Terms
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.paymentTerms}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Registered Since</Label>
-                                      <p className="font-medium">{selectedSupplier.registeredDate}</p>
+                                      <Label className="text-muted-foreground">
+                                        Registered Since
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedSupplier.registeredDate}
+                                      </p>
                                     </div>
                                   </div>
 
                                   {selectedSupplier.notes && (
                                     <div>
-                                      <Label className="text-muted-foreground">Notes</Label>
-                                      <p className="mt-1 text-sm">{selectedSupplier.notes}</p>
+                                      <Label className="text-muted-foreground">
+                                        Notes
+                                      </Label>
+                                      <p className="mt-1 text-sm">
+                                        {selectedSupplier.notes}
+                                      </p>
                                     </div>
                                   )}
 
                                   <div className="flex gap-2 pt-4 border-t">
-                                    <Button size="sm" onClick={() => startEdit(selectedSupplier)}>
+                                    <Button
+                                      size="sm"
+                                      onClick={() =>
+                                        startEdit(selectedSupplier)
+                                      }
+                                    >
                                       <Edit className="h-4 w-4 mr-2" />
                                       Edit Details
                                     </Button>
@@ -520,7 +677,12 @@ export default function SuppliersPage() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => toggleSupplierStatus(selectedSupplier.id, "flagged")}
+                                        onClick={() =>
+                                          toggleSupplierStatus(
+                                            selectedSupplier.id,
+                                            "flagged"
+                                          )
+                                        }
                                       >
                                         <AlertCircle className="h-4 w-4 mr-2" />
                                         Flag Supplier
@@ -530,7 +692,12 @@ export default function SuppliersPage() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => toggleSupplierStatus(selectedSupplier.id, "active")}
+                                        onClick={() =>
+                                          toggleSupplierStatus(
+                                            selectedSupplier.id,
+                                            "active"
+                                          )
+                                        }
                                       >
                                         Remove Flag
                                       </Button>
@@ -538,15 +705,22 @@ export default function SuppliersPage() {
                                   </div>
                                 </TabsContent>
 
-                                <TabsContent value="performance" className="space-y-4">
+                                <TabsContent
+                                  value="performance"
+                                  className="space-y-4"
+                                >
                                   <div className="grid gap-4 md:grid-cols-2">
                                     <Card>
                                       <CardHeader>
-                                        <CardTitle className="text-sm">Overall Performance Score</CardTitle>
+                                        <CardTitle className="text-sm">
+                                          Overall Performance Score
+                                        </CardTitle>
                                       </CardHeader>
                                       <CardContent>
                                         <div
-                                          className={`text-3xl font-bold ${getPerformanceColor(selectedSupplier.performanceScore)}`}
+                                          className={`text-3xl font-bold ${getPerformanceColor(
+                                            selectedSupplier.performanceScore
+                                          )}`}
                                         >
                                           {selectedSupplier.performanceScore}%
                                         </div>
@@ -554,24 +728,39 @@ export default function SuppliersPage() {
                                     </Card>
                                     <Card>
                                       <CardHeader>
-                                        <CardTitle className="text-sm">On-Time Delivery Rate</CardTitle>
+                                        <CardTitle className="text-sm">
+                                          On-Time Delivery Rate
+                                        </CardTitle>
                                       </CardHeader>
                                       <CardContent>
-                                        <div className="text-3xl font-bold">{selectedSupplier.onTimeDeliveryRate}%</div>
+                                        <div className="text-3xl font-bold">
+                                          {selectedSupplier.onTimeDeliveryRate}%
+                                        </div>
                                       </CardContent>
                                     </Card>
                                     <Card>
                                       <CardHeader>
-                                        <CardTitle className="text-sm">Quality Rating</CardTitle>
+                                        <CardTitle className="text-sm">
+                                          Quality Rating
+                                        </CardTitle>
                                       </CardHeader>
                                       <CardContent>
                                         <div className="flex items-center gap-2">
-                                          <span className="text-3xl font-bold">{selectedSupplier.qualityRating}</span>
+                                          <span className="text-3xl font-bold">
+                                            {selectedSupplier.qualityRating}
+                                          </span>
                                           <div className="flex">
                                             {[...Array(5)].map((_, i) => (
                                               <Star
                                                 key={i}
-                                                className={`h-5 w-5 ${i < Math.round(selectedSupplier.qualityRating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                                                className={`h-5 w-5 ${
+                                                  i <
+                                                  Math.round(
+                                                    selectedSupplier.qualityRating
+                                                  )
+                                                    ? "fill-yellow-400 text-yellow-400"
+                                                    : "text-gray-300"
+                                                }`}
                                               />
                                             ))}
                                           </div>
@@ -580,12 +769,16 @@ export default function SuppliersPage() {
                                     </Card>
                                     <Card>
                                       <CardHeader>
-                                        <CardTitle className="text-sm">Avg Delivery Time</CardTitle>
+                                        <CardTitle className="text-sm">
+                                          Avg Delivery Time
+                                        </CardTitle>
                                       </CardHeader>
                                       <CardContent>
                                         <div className="text-3xl font-bold">
                                           {selectedSupplier.averageDeliveryTime}
-                                          <span className="text-lg text-muted-foreground ml-1">days</span>
+                                          <span className="text-lg text-muted-foreground ml-1">
+                                            days
+                                          </span>
                                         </div>
                                       </CardContent>
                                     </Card>
@@ -593,55 +786,111 @@ export default function SuppliersPage() {
 
                                   <div className="grid gap-4 md:grid-cols-2">
                                     <div className="border rounded-lg p-4">
-                                      <Label className="text-muted-foreground">Total Orders</Label>
-                                      <p className="text-2xl font-bold mt-1">{selectedSupplier.totalOrders}</p>
+                                      <Label className="text-muted-foreground">
+                                        Total Orders
+                                      </Label>
+                                      <p className="text-2xl font-bold mt-1">
+                                        {selectedSupplier.totalOrders}
+                                      </p>
                                     </div>
                                     <div className="border rounded-lg p-4">
-                                      <Label className="text-muted-foreground">Total Spent</Label>
-                                      <p className="text-2xl font-bold mt-1">LKR {selectedSupplier.totalSpent.toLocaleString()}</p>
+                                      <Label className="text-muted-foreground">
+                                        Total Spent
+                                      </Label>
+                                      <p className="text-2xl font-bold mt-1">
+                                        LKR{" "}
+                                        {selectedSupplier.totalSpent.toLocaleString()}
+                                      </p>
                                     </div>
                                   </div>
                                 </TabsContent>
 
-                                <TabsContent value="history" className="space-y-4">
+                                <TabsContent
+                                  value="history"
+                                  className="space-y-4"
+                                >
                                   <div>
-                                    <Label className="text-muted-foreground">Recent Purchase Orders</Label>
-                                    {mockPurchaseHistory[selectedSupplier.id]?.length > 0 ? (
+                                    <Label className="text-muted-foreground">
+                                      Recent Purchase Orders
+                                    </Label>
+                                    {mockPurchaseHistory[selectedSupplier.id]
+                                      ?.length > 0 ? (
                                       <div className="mt-2 border rounded-lg overflow-hidden">
                                         <table className="w-full">
                                           <thead className="bg-muted">
                                             <tr>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">PO ID</th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">Date</th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">Items</th>
-                                              <th className="text-right py-2 px-3 text-sm font-medium">Amount (LKR)</th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">Delivery</th>
-                                              <th className="text-left py-2 px-3 text-sm font-medium">Quality</th>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">
+                                                PO ID
+                                              </th>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">
+                                                Date
+                                              </th>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">
+                                                Items
+                                              </th>
+                                              <th className="text-right py-2 px-3 text-sm font-medium">
+                                                Amount (LKR)
+                                              </th>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">
+                                                Delivery
+                                              </th>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">
+                                                Quality
+                                              </th>
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            {mockPurchaseHistory[selectedSupplier.id].map((history, idx) => (
-                                              <tr key={idx} className="border-t">
-                                                <td className="py-2 px-3 text-sm font-medium">{history.poId}</td>
-                                                <td className="py-2 px-3 text-sm">{history.date}</td>
-                                                <td className="py-2 px-3 text-sm">{history.items.join(", ")}</td>
-                                                <td className="py-2 px-3 text-sm text-right">LKR {history.amount.toLocaleString()}</td>
+                                            {mockPurchaseHistory[
+                                              selectedSupplier.id
+                                            ].map((history, idx) => (
+                                              <tr
+                                                key={idx}
+                                                className="border-t"
+                                              >
+                                                <td className="py-2 px-3 text-sm font-medium">
+                                                  {history.poId}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm">
+                                                  {history.date}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm">
+                                                  {history.items.join(", ")}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right">
+                                                  LKR{" "}
+                                                  {history.amount.toLocaleString()}
+                                                </td>
                                                 <td className="py-2 px-3">
                                                   <Badge
-                                                    variant={getDeliveryStatusBadge(history.deliveryStatus).variant}
-                                                    className={getDeliveryStatusBadge(history.deliveryStatus).className}
+                                                    variant={
+                                                      getDeliveryStatusBadge(
+                                                        history.deliveryStatus
+                                                      ).variant
+                                                    }
+                                                    className={
+                                                      getDeliveryStatusBadge(
+                                                        history.deliveryStatus
+                                                      ).className
+                                                    }
                                                   >
                                                     {history.deliveryStatus}
                                                   </Badge>
                                                 </td>
                                                 <td className="py-2 px-3">
                                                   <div className="flex">
-                                                    {[...Array(5)].map((_, i) => (
-                                                      <Star
-                                                        key={i}
-                                                        className={`h-3 w-3 ${i < history.qualityRating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                                                      />
-                                                    ))}
+                                                    {[...Array(5)].map(
+                                                      (_, i) => (
+                                                        <Star
+                                                          key={i}
+                                                          className={`h-3 w-3 ${
+                                                            i <
+                                                            history.qualityRating
+                                                              ? "fill-yellow-400 text-yellow-400"
+                                                              : "text-gray-300"
+                                                          }`}
+                                                        />
+                                                      )
+                                                    )}
                                                   </div>
                                                 </td>
                                               </tr>
@@ -650,7 +899,9 @@ export default function SuppliersPage() {
                                         </table>
                                       </div>
                                     ) : (
-                                      <p className="text-sm text-muted-foreground mt-2">No purchase history available</p>
+                                      <p className="text-sm text-muted-foreground mt-2">
+                                        No purchase history available
+                                      </p>
                                     )}
                                   </div>
                                 </TabsContent>
@@ -658,7 +909,11 @@ export default function SuppliersPage() {
                             )}
                           </DialogContent>
                         </Dialog>
-                        <Button size="sm" variant="outline" onClick={() => startEdit(supplier)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => startEdit(supplier)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
@@ -672,15 +927,25 @@ export default function SuppliersPage() {
       </Card>
 
       {/* Add/Edit Supplier Dialog */}
-      <Dialog open={showAddForm || editMode} onOpenChange={(open) => !open && (setShowAddForm(false), resetForm())}>
+      <Dialog
+        open={showAddForm || editMode}
+        onOpenChange={(open) => !open && (setShowAddForm(false), resetForm())}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editMode ? "Edit Supplier" : "Add New Supplier"}</DialogTitle>
+            <DialogTitle>
+              {editMode ? "Edit Supplier" : "Add New Supplier"}
+            </DialogTitle>
             <DialogDescription>
-              {editMode ? "Update supplier information" : "Enter supplier details to add to database"}
+              {editMode
+                ? "Update supplier information"
+                : "Enter supplier details to add to database"}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={editMode ? handleEditSupplier : handleAddSupplier} className="space-y-4">
+          <form
+            onSubmit={editMode ? handleEditSupplier : handleAddSupplier}
+            className="space-y-4"
+          >
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Company Name *</Label>
@@ -688,7 +953,9 @@ export default function SuppliersPage() {
                   id="name"
                   placeholder="Enter company name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -698,7 +965,9 @@ export default function SuppliersPage() {
                   id="contactPerson"
                   placeholder="Enter contact name"
                   value={formData.contactPerson}
-                  onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, contactPerson: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -709,7 +978,9 @@ export default function SuppliersPage() {
                   type="email"
                   placeholder="email@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -719,7 +990,9 @@ export default function SuppliersPage() {
                   id="phone"
                   placeholder="+1-555-0000"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -729,20 +1002,33 @@ export default function SuppliersPage() {
                   id="address"
                   placeholder="Full address"
                   value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="category">Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, category: value })
+                  }
+                >
                   <SelectTrigger id="category">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Pharmaceuticals">Pharmaceuticals</SelectItem>
-                    <SelectItem value="Medical Equipment">Medical Equipment</SelectItem>
-                    <SelectItem value="Surgical Supplies">Surgical Supplies</SelectItem>
+                    <SelectItem value="Pharmaceuticals">
+                      Pharmaceuticals
+                    </SelectItem>
+                    <SelectItem value="Medical Equipment">
+                      Medical Equipment
+                    </SelectItem>
+                    <SelectItem value="Surgical Supplies">
+                      Surgical Supplies
+                    </SelectItem>
                     <SelectItem value="Lab Equipment">Lab Equipment</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
@@ -752,7 +1038,9 @@ export default function SuppliersPage() {
                 <Label htmlFor="paymentTerms">Payment Terms *</Label>
                 <Select
                   value={formData.paymentTerms}
-                  onValueChange={(value) => setFormData({ ...formData, paymentTerms: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, paymentTerms: value })
+                  }
                 >
                   <SelectTrigger id="paymentTerms">
                     <SelectValue />
@@ -762,7 +1050,9 @@ export default function SuppliersPage() {
                     <SelectItem value="Net 30">Net 30 Days</SelectItem>
                     <SelectItem value="Net 45">Net 45 Days</SelectItem>
                     <SelectItem value="Net 60">Net 60 Days</SelectItem>
-                    <SelectItem value="Due on Receipt">Due on Receipt</SelectItem>
+                    <SelectItem value="Due on Receipt">
+                      Due on Receipt
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -774,20 +1064,24 @@ export default function SuppliersPage() {
                 id="notes"
                 placeholder="Any additional notes about this supplier..."
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
                 rows={3}
               />
             </div>
 
             <div className="flex gap-2 pt-4 border-t">
-              <Button type="submit">{editMode ? "Update Supplier" : "Add Supplier"}</Button>
+              <Button type="submit">
+                {editMode ? "Update Supplier" : "Add Supplier"}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setShowAddForm(false)
-                  setEditMode(false)
-                  resetForm()
+                  setShowAddForm(false);
+                  setEditMode(false);
+                  resetForm();
                 }}
               >
                 Cancel
@@ -797,5 +1091,5 @@ export default function SuppliersPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

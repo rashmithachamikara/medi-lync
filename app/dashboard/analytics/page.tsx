@@ -1,9 +1,23 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Download, TrendingUp, TrendingDown, DollarSign, Package, Users, ShoppingCart } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  Download,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Package,
+  Users,
+  ShoppingCart,
+} from "lucide-react";
 import {
   Line,
   LineChart,
@@ -19,8 +33,12 @@ import {
   CartesianGrid,
   Legend,
   ResponsiveContainer,
-} from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 const monthlyTurnover = [
   { month: "Jul", revenue: 6500000, expenses: 4200000, profit: 2300000 },
@@ -29,21 +47,49 @@ const monthlyTurnover = [
   { month: "Oct", revenue: 8100000, expenses: 4800000, profit: 3300000 },
   { month: "Nov", revenue: 8500000, expenses: 5000000, profit: 3500000 },
   { month: "Dec", revenue: 9200000, expenses: 5400000, profit: 3800000 },
-]
+];
 
 const salesByCategory = [
-  { name: "Prescription", value: 45, amount: 20700000, color: "hsl(var(--chart-1))", orders: 1850, growth: 12.5 },
-  { name: "OTC Medicines", value: 30, amount: 13800000, color: "hsl(var(--chart-2))", orders: 1240, growth: 8.3 },
-  { name: "Supplements", value: 15, amount: 6900000, color: "hsl(var(--chart-3))", orders: 580, growth: 15.2 },
-  { name: "Medical Devices", value: 10, amount: 4600000, color: "hsl(var(--chart-4))", orders: 320, growth: 5.8 },
-]
+  {
+    name: "Prescription",
+    value: 45,
+    amount: 20700000,
+    color: "hsl(var(--chart-1))",
+    orders: 1850,
+    growth: 12.5,
+  },
+  {
+    name: "OTC Medicines",
+    value: 30,
+    amount: 13800000,
+    color: "hsl(var(--chart-2))",
+    orders: 1240,
+    growth: 8.3,
+  },
+  {
+    name: "Supplements",
+    value: 15,
+    amount: 6900000,
+    color: "hsl(var(--chart-3))",
+    orders: 580,
+    growth: 15.2,
+  },
+  {
+    name: "Medical Devices",
+    value: 10,
+    amount: 4600000,
+    color: "hsl(var(--chart-4))",
+    orders: 320,
+    growth: 5.8,
+  },
+];
 
 const branchPerformance = [
   { branch: "Main Branch", sales: 3500000, orders: 450, growth: 15.2 },
   { branch: "Colombo", sales: 2800000, orders: 380, growth: 12.8 },
   { branch: "Kandy", sales: 2200000, orders: 320, growth: 8.5 },
   { branch: "Galle", sales: 1900000, orders: 280, growth: 6.3 },
-]
+];
 
 const topProducts = [
   { name: "Paracetamol 500mg", units: 2450, revenue: 735000, margin: 28 },
@@ -51,7 +97,7 @@ const topProducts = [
   { name: "Vitamin D3", units: 1650, revenue: 825000, margin: 35 },
   { name: "Omeprazole 20mg", units: 1420, revenue: 852000, margin: 30 },
   { name: "Metformin 500mg", units: 1280, revenue: 640000, margin: 25 },
-]
+];
 
 const inventoryTurnover = [
   { month: "Jul", turnoverRate: 4.2, daysInStock: 86 },
@@ -60,28 +106,73 @@ const inventoryTurnover = [
   { month: "Oct", turnoverRate: 4.8, daysInStock: 75 },
   { month: "Nov", turnoverRate: 5.1, daysInStock: 71 },
   { month: "Dec", turnoverRate: 5.4, daysInStock: 67 },
-]
+];
 
 const supplierPerformance = [
   { supplier: "MediSupply Ltd", onTime: 95, quality: 98, value: 8500000 },
   { supplier: "PharmaCorp", onTime: 88, quality: 95, value: 6200000 },
   { supplier: "HealthDistributors", onTime: 92, quality: 97, value: 5800000 },
   { supplier: "Global Pharma", onTime: 85, quality: 93, value: 4100000 },
-]
+];
 
 const stockAlerts = [
-  { category: "Critical", count: 12, percentage: 15, color: "hsl(0, 84%, 60%)" },
+  {
+    category: "Critical",
+    count: 12,
+    percentage: 15,
+    color: "hsl(0, 84%, 60%)",
+  },
   { category: "Low", count: 28, percentage: 35, color: "hsl(36, 100%, 50%)" },
-  { category: "Optimal", count: 40, percentage: 50, color: "hsl(142, 71%, 45%)" },
-]
+  {
+    category: "Optimal",
+    count: 40,
+    percentage: 50,
+    color: "hsl(142, 71%, 45%)",
+  },
+];
 
 const stockBreakdown = [
-  { id: 1, name: "Paracetamol 500mg", status: "Critical", quantity: 5, reorderLevel: 50, location: "Shelf A1" },
-  { id: 2, name: "Amoxicillin 250mg", status: "Critical", quantity: 8, reorderLevel: 40, location: "Shelf B2" },
-  { id: 3, name: "Ibuprofen 400mg", status: "Low", quantity: 15, reorderLevel: 30, location: "Shelf A3" },
-  { id: 4, name: "Vitamin D3", status: "Low", quantity: 22, reorderLevel: 35, location: "Shelf C1" },
-  { id: 5, name: "Omeprazole 20mg", status: "Optimal", quantity: 85, reorderLevel: 40, location: "Shelf B1" },
-]
+  {
+    id: 1,
+    name: "Paracetamol 500mg",
+    status: "Critical",
+    quantity: 5,
+    reorderLevel: 50,
+    location: "Shelf A1",
+  },
+  {
+    id: 2,
+    name: "Amoxicillin 250mg",
+    status: "Critical",
+    quantity: 8,
+    reorderLevel: 40,
+    location: "Shelf B2",
+  },
+  {
+    id: 3,
+    name: "Ibuprofen 400mg",
+    status: "Low",
+    quantity: 15,
+    reorderLevel: 30,
+    location: "Shelf A3",
+  },
+  {
+    id: 4,
+    name: "Vitamin D3",
+    status: "Low",
+    quantity: 22,
+    reorderLevel: 35,
+    location: "Shelf C1",
+  },
+  {
+    id: 5,
+    name: "Omeprazole 20mg",
+    status: "Optimal",
+    quantity: 85,
+    reorderLevel: 40,
+    location: "Shelf B1",
+  },
+];
 
 const dailySalesTrend = [
   { day: "Mon", sales: 1250000, orders: 185 },
@@ -91,16 +182,17 @@ const dailySalesTrend = [
   { day: "Fri", sales: 1450000, orders: 215 },
   { day: "Sat", sales: 1680000, orders: 248 },
   { day: "Sun", sales: 980000, orders: 142 },
-]
+];
 
 export default function AnalyticsPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Analytics & Reporting</h1>
-          <p className="text-muted-foreground mt-1">Business insights and performance metrics</p>
-        </div>
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        
+          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+            Analytics
+          </h3>
+        
         <div className="flex gap-2">
           <Select defaultValue="last-6-months">
             <SelectTrigger className="w-40">
@@ -124,7 +216,9 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Revenue
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -137,32 +231,44 @@ export default function AnalyticsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Avg Order Value</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Avg Order Value
+            </CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">LKR 32,450</div>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">+5.4% from last period</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+              +5.4% from last period
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Orders</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Orders
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">1,430</div>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">+12.3% from last period</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+              +12.3% from last period
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Customers</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Active Customers
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">892</div>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">+8.7% from last period</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+              +8.7% from last period
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -193,15 +299,34 @@ export default function AnalyticsPage() {
               <AreaChart data={monthlyTurnover}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                    <stop
+                      offset="5%"
+                      stopColor="hsl(var(--chart-1))"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="hsl(var(--chart-1))"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                   <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0} />
+                    <stop
+                      offset="5%"
+                      stopColor="hsl(142, 71%, 45%)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="hsl(142, 71%, 45%)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis dataKey="month" className="text-xs" />
                 <YAxis className="text-xs" />
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -256,10 +381,17 @@ export default function AnalyticsPage() {
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={dailySalesTrend}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis dataKey="day" className="text-xs" />
                 <YAxis yAxisId="left" className="text-xs" />
-                <YAxis yAxisId="right" orientation="right" className="text-xs" />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  className="text-xs"
+                />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
                 <Bar
@@ -330,19 +462,25 @@ export default function AnalyticsPage() {
                   <ChartTooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
-                        const data = payload[0].payload
+                        const data = payload[0].payload;
                         return (
                           <div className="bg-background border border-border rounded-lg p-2 shadow-lg">
-                            <p className="font-medium text-foreground">{data.name}</p>
+                            <p className="font-medium text-foreground">
+                              {data.name}
+                            </p>
                             <p className="text-sm text-muted-foreground">
                               Revenue: LKR {(data.amount / 1000000).toFixed(1)}M
                             </p>
-                            <p className="text-sm text-muted-foreground">Share: {data.value}%</p>
-                            <p className="text-sm text-muted-foreground">Orders: {data.orders}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Share: {data.value}%
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Orders: {data.orders}
+                            </p>
                           </div>
-                        )
+                        );
                       }
-                      return null
+                      return null;
                     }}
                   />
                 </PieChart>
@@ -351,19 +489,32 @@ export default function AnalyticsPage() {
 
             <div className="space-y-3">
               {salesByCategory.map((category, index) => (
-                <div key={index} className="p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div
+                  key={index}
+                  className="p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
-                      <span className="font-medium text-sm text-foreground">{category.name}</span>
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <span className="font-medium text-sm text-foreground">
+                        {category.name}
+                      </span>
                     </div>
-                    <span className="text-xs font-semibold text-muted-foreground">{category.value}%</span>
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {category.value}%
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>
-                      LKR {(category.amount / 1000000).toFixed(1)}M • {category.orders} orders
+                      LKR {(category.amount / 1000000).toFixed(1)}M •{" "}
+                      {category.orders} orders
                     </span>
-                    <span className="text-green-600 dark:text-green-400 font-medium">+{category.growth}%</span>
+                    <span className="text-green-600 dark:text-green-400 font-medium">
+                      +{category.growth}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -403,7 +554,9 @@ export default function AnalyticsPage() {
                     outerRadius={90}
                     paddingAngle={2}
                     dataKey="percentage"
-                    label={({ category, percentage }) => `${category}: ${percentage}%`}
+                    label={({ category, percentage }) =>
+                      `${category}: ${percentage}%`
+                    }
                   >
                     {stockAlerts.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -419,13 +572,23 @@ export default function AnalyticsPage() {
                 <div
                   key={index}
                   className="p-3 rounded-lg border"
-                  style={{ borderColor: alert.color, backgroundColor: `${alert.color}15` }}
+                  style={{
+                    borderColor: alert.color,
+                    backgroundColor: `${alert.color}15`,
+                  }}
                 >
-                  <div className="text-xs font-medium text-muted-foreground">{alert.category}</div>
-                  <div className="text-lg font-bold mt-1" style={{ color: alert.color }}>
+                  <div className="text-xs font-medium text-muted-foreground">
+                    {alert.category}
+                  </div>
+                  <div
+                    className="text-lg font-bold mt-1"
+                    style={{ color: alert.color }}
+                  >
                     {alert.count}
                   </div>
-                  <div className="text-xs text-muted-foreground">{alert.percentage}% of stock</div>
+                  <div className="text-xs text-muted-foreground">
+                    {alert.percentage}% of stock
+                  </div>
                 </div>
               ))}
             </div>
@@ -436,18 +599,30 @@ export default function AnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Stock Items by Status</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">Items requiring attention or monitoring</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Items requiring attention or monitoring
+          </p>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Product Name</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">Current Qty</th>
-                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">Reorder Level</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Location</th>
+                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                    Product Name
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                    Current Qty
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-muted-foreground">
+                    Reorder Level
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">
+                    Location
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -456,10 +631,13 @@ export default function AnalyticsPage() {
                     item.status === "Critical"
                       ? "hsl(0, 84%, 60%)"
                       : item.status === "Low"
-                        ? "hsl(36, 100%, 50%)"
-                        : "hsl(142, 71%, 45%)"
+                      ? "hsl(36, 100%, 50%)"
+                      : "hsl(142, 71%, 45%)";
                   return (
-                    <tr key={item.id} className="border-b hover:bg-muted/50 transition-colors">
+                    <tr
+                      key={item.id}
+                      className="border-b hover:bg-muted/50 transition-colors"
+                    >
                       <td className="py-3 px-4 text-foreground">{item.name}</td>
                       <td className="py-3 px-4">
                         <span
@@ -469,11 +647,17 @@ export default function AnalyticsPage() {
                           {item.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-center font-medium text-foreground">{item.quantity}</td>
-                      <td className="py-3 px-4 text-center text-muted-foreground">{item.reorderLevel}</td>
-                      <td className="py-3 px-4 text-muted-foreground">{item.location}</td>
+                      <td className="py-3 px-4 text-center font-medium text-foreground">
+                        {item.quantity}
+                      </td>
+                      <td className="py-3 px-4 text-center text-muted-foreground">
+                        {item.reorderLevel}
+                      </td>
+                      <td className="py-3 px-4 text-muted-foreground">
+                        {item.location}
+                      </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
@@ -501,10 +685,17 @@ export default function AnalyticsPage() {
           >
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={inventoryTurnover}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
                 <XAxis dataKey="month" className="text-xs" />
                 <YAxis yAxisId="left" className="text-xs" />
-                <YAxis yAxisId="right" orientation="right" className="text-xs" />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  className="text-xs"
+                />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
                 <Line
@@ -514,7 +705,12 @@ export default function AnalyticsPage() {
                   stroke="var(--color-turnoverRate)"
                   strokeWidth={3}
                   name="Turnover Rate"
-                  dot={{ r: 5, fill: "var(--color-turnoverRate)", stroke: "var(--color-turnoverRate)", strokeWidth: 2 }}
+                  dot={{
+                    r: 5,
+                    fill: "var(--color-turnoverRate)",
+                    stroke: "var(--color-turnoverRate)",
+                    strokeWidth: 2,
+                  }}
                   activeDot={{ r: 7 }}
                 />
                 <Line
@@ -525,7 +721,12 @@ export default function AnalyticsPage() {
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   name="Avg Days in Stock"
-                  dot={{ r: 5, fill: "var(--color-daysInStock)", stroke: "var(--color-daysInStock)", strokeWidth: 2 }}
+                  dot={{
+                    r: 5,
+                    fill: "var(--color-daysInStock)",
+                    stroke: "var(--color-daysInStock)",
+                    strokeWidth: 2,
+                  }}
                   activeDot={{ r: 7 }}
                 />
               </LineChart>
@@ -556,12 +757,25 @@ export default function AnalyticsPage() {
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={branchPerformance} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border"
+                  />
                   <XAxis type="number" className="text-xs" />
-                  <YAxis dataKey="branch" type="category" className="text-xs" width={100} />
+                  <YAxis
+                    dataKey="branch"
+                    type="category"
+                    className="text-xs"
+                    width={100}
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar dataKey="sales" fill="var(--color-sales)" name="Sales (LKR)" radius={[0, 4, 4, 0]} />
+                  <Bar
+                    dataKey="sales"
+                    fill="var(--color-sales)"
+                    name="Sales (LKR)"
+                    radius={[0, 4, 4, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -577,8 +791,12 @@ export default function AnalyticsPage() {
               {topProducts.map((product, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-foreground">{product.name}</span>
-                    <span className="text-muted-foreground">{product.units} units</span>
+                    <span className="font-medium text-foreground">
+                      {product.name}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {product.units} units
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
@@ -632,18 +850,37 @@ export default function AnalyticsPage() {
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={supplierPerformance}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="supplier" className="text-xs" angle={-15} textAnchor="end" height={80} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  className="stroke-border"
+                />
+                <XAxis
+                  dataKey="supplier"
+                  className="text-xs"
+                  angle={-15}
+                  textAnchor="end"
+                  height={80}
+                />
                 <YAxis className="text-xs" domain={[0, 100]} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Bar dataKey="onTime" fill="var(--color-onTime)" name="On-Time Delivery %" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="quality" fill="var(--color-quality)" name="Quality Score %" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="onTime"
+                  fill="var(--color-onTime)"
+                  name="On-Time Delivery %"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="quality"
+                  fill="var(--color-quality)"
+                  name="Quality Score %"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
