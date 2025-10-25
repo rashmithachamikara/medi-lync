@@ -2,7 +2,8 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -137,6 +138,7 @@ const mockOrders: PurchaseOrder[] = [
 ];
 
 export default function PurchaseOrdersPage() {
+  const searchParams = useSearchParams();
   const [orders, setOrders] = useState(mockOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -151,6 +153,36 @@ export default function PurchaseOrdersPage() {
     paymentTerms: "Net 30",
     notes: "",
   });
+
+  // Auto-fill form from stock page query parameters
+  useEffect(() => {
+    const itemName = searchParams.get("item");
+    const currentQuantity = searchParams.get("quantity");
+    const reorderLevel = searchParams.get("reorderLevel");
+    const itemId = searchParams.get("itemId");
+
+    if (itemName) {
+      // Calculate suggested order quantity (difference between reorder level and current stock)
+      const suggestedQuantity = reorderLevel && currentQuantity 
+        ? Math.max(Number(reorderLevel) - Number(currentQuantity), 0)
+        : "";
+
+      setNewOrder({
+        supplier: "",
+        items: [{ 
+          name: itemName, 
+          quantity: suggestedQuantity.toString(), 
+          unitPrice: "" 
+        }],
+        expectedDeliveryDate: "",
+        paymentTerms: "Net 30",
+        notes: itemId 
+          ? `Reorder for low stock item (ID: ${itemId}). Current stock: ${currentQuantity}, Reorder level: ${reorderLevel}`
+          : "",
+      });
+      setShowForm(true);
+    }
+  }, [searchParams]);
 
   const addItemField = () => {
     setNewOrder({
