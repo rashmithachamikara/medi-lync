@@ -227,6 +227,10 @@ export default function PurchaseOrdersPage() {
     type: "send" | "deliver" | "close" | null
     orderId: string | null
   }>({ type: null, orderId: null })
+  const [confirmRequestAction, setConfirmRequestAction] = useState<{
+    type: "approve" | "decline" | null
+    requestId: string | null
+  }>({ type: null, requestId: null })
   const [newOrder, setNewOrder] = useState({
     supplier: "",
     items: [{ name: "", quantity: "", unitPrice: "" }],
@@ -359,10 +363,25 @@ export default function PurchaseOrdersPage() {
 
   const handleApproveRequest = (requestId: string) => {
     setRequests(requests.map((req) => (req.id === requestId ? { ...req, status: "approved" as RequestStatus } : req)))
+    setConfirmRequestAction({ type: null, requestId: null })
   }
 
   const handleDeclineRequest = (requestId: string) => {
     setRequests(requests.map((req) => (req.id === requestId ? { ...req, status: "declined" as RequestStatus } : req)))
+    setConfirmRequestAction({ type: null, requestId: null })
+  }
+
+  const handleConfirmRequestAction = () => {
+    if (confirmRequestAction.requestId && confirmRequestAction.type) {
+      switch (confirmRequestAction.type) {
+        case "approve":
+          handleApproveRequest(confirmRequestAction.requestId)
+          break
+        case "decline":
+          handleDeclineRequest(confirmRequestAction.requestId)
+          break
+      }
+    }
   }
 
   const convertRequestToPO = (request: PurchaseRequest) => {
@@ -621,14 +640,21 @@ export default function PurchaseOrdersPage() {
                                     <div className="flex gap-2 pt-4 border-t">
                                       {selectedRequest.status === "pending" && (
                                         <>
-                                          <Button size="sm" onClick={() => handleApproveRequest(selectedRequest.id)}>
+                                          <Button
+                                            size="sm"
+                                            onClick={() =>
+                                              setConfirmRequestAction({ type: "approve", requestId: selectedRequest.id })
+                                            }
+                                          >
                                             <CheckCircle className="h-4 w-4 mr-2" />
                                             Approve Request
                                           </Button>
                                           <Button
                                             size="sm"
                                             variant="destructive"
-                                            onClick={() => handleDeclineRequest(selectedRequest.id)}
+                                            onClick={() =>
+                                              setConfirmRequestAction({ type: "decline", requestId: selectedRequest.id })
+                                            }
                                           >
                                             <XCircle className="h-4 w-4 mr-2" />
                                             Decline Request
@@ -649,10 +675,17 @@ export default function PurchaseOrdersPage() {
 
                             {request.status === "pending" && (
                               <>
-                                <Button size="sm" onClick={() => handleApproveRequest(request.id)}>
+                                <Button
+                                  size="sm"
+                                  onClick={() => setConfirmRequestAction({ type: "approve", requestId: request.id })}
+                                >
                                   <CheckCircle className="h-3 w-3" />
                                 </Button>
-                                <Button size="sm" variant="destructive" onClick={() => handleDeclineRequest(request.id)}>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setConfirmRequestAction({ type: "decline", requestId: request.id })}
+                                >
                                   <XCircle className="h-3 w-3" />
                                 </Button>
                               </>
@@ -1172,6 +1205,36 @@ export default function PurchaseOrdersPage() {
               {confirmAction.type === "send" && "Send Order"}
               {confirmAction.type === "deliver" && "Confirm Delivery"}
               {confirmAction.type === "close" && "Close Order"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={confirmRequestAction.type !== null}
+        onOpenChange={() => setConfirmRequestAction({ type: null, requestId: null })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmRequestAction.type === "approve" && "Confirm Approve Request"}
+              {confirmRequestAction.type === "decline" && "Confirm Decline Request"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmRequestAction.type === "approve" &&
+                "Are you sure you want to approve this purchase request? This will allow the request to be converted into a purchase order."}
+              {confirmRequestAction.type === "decline" &&
+                "Are you sure you want to decline this purchase request? This action will reject the request and it cannot be processed further."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmRequestAction}
+              className={confirmRequestAction.type === "decline" ? "bg-destructive hover:bg-destructive/90" : ""}
+            >
+              {confirmRequestAction.type === "approve" && "Approve Request"}
+              {confirmRequestAction.type === "decline" && "Decline Request"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
