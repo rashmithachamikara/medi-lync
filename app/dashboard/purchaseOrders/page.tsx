@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,21 +29,21 @@ type POStatus = "draft" | "sent" | "delivered" | "closed"
 type RequestStatus = "pending" | "approved" | "declined"
 
 interface PurchaseOrder {
-  id: string
-  supplier: string
-  supplierId: string
+  id: string;
+  supplier: string;
+  supplierId: string;
   items: Array<{
-    name: string
-    quantity: number
-    unitPrice: number
-  }>
-  totalAmount: number
-  status: POStatus
-  createdDate: string
-  expectedDeliveryDate: string
-  paymentTerms: string
-  notes: string
-  supplierPerformance: number
+    name: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
+  totalAmount: number;
+  status: POStatus;
+  createdDate: string;
+  expectedDeliveryDate: string;
+  paymentTerms: string;
+  notes: string;
+  supplierPerformance: number;
 }
 
 interface PurchaseRequest {
@@ -65,9 +66,14 @@ interface PurchaseRequest {
 const mockSuppliers = [
   { id: "SUP-001", name: "MediSupply Ltd", performance: 95, deliveryRate: 98 },
   { id: "SUP-002", name: "PharmaCorp", performance: 88, deliveryRate: 92 },
-  { id: "SUP-003", name: "HealthCare Supplies", performance: 92, deliveryRate: 95 },
+  {
+    id: "SUP-003",
+    name: "HealthCare Supplies",
+    performance: 92,
+    deliveryRate: 95,
+  },
   { id: "SUP-004", name: "Global Pharma", performance: 85, deliveryRate: 88 },
-]
+];
 
 const mockOrders: PurchaseOrder[] = [
   {
@@ -128,7 +134,7 @@ const mockOrders: PurchaseOrder[] = [
     notes: "Quality verified and stock updated",
     supplierPerformance: 95,
   },
-]
+];
 
 const mockRequests: PurchaseRequest[] = [
   {
@@ -207,6 +213,7 @@ const mockRequests: PurchaseRequest[] = [
 ]
 
 export default function PurchaseOrdersPage() {
+  const searchParams = useSearchParams()
   const [orders, setOrders] = useState(mockOrders)
   const [requests, setRequests] = useState(mockRequests)
   const [searchTerm, setSearchTerm] = useState("")
@@ -226,38 +233,71 @@ export default function PurchaseOrdersPage() {
     expectedDeliveryDate: "",
     paymentTerms: "Net 30",
     notes: "",
-  })
+  });
+
+  // Auto-fill form from stock page query parameters
+  useEffect(() => {
+    const itemName = searchParams.get("item");
+    const currentQuantity = searchParams.get("quantity");
+    const reorderLevel = searchParams.get("reorderLevel");
+    const itemId = searchParams.get("itemId");
+
+    if (itemName) {
+      // Calculate suggested order quantity (difference between reorder level and current stock)
+      const suggestedQuantity = reorderLevel && currentQuantity 
+        ? Math.max(Number(reorderLevel) - Number(currentQuantity), 0)
+        : "";
+
+      setNewOrder({
+        supplier: "",
+        items: [{ 
+          name: itemName, 
+          quantity: suggestedQuantity.toString(), 
+          unitPrice: "" 
+        }],
+        expectedDeliveryDate: "",
+        paymentTerms: "Net 30",
+        notes: itemId 
+          ? `Reorder for low stock item (ID: ${itemId}). Current stock: ${currentQuantity}, Reorder level: ${reorderLevel}`
+          : "",
+      });
+      setShowForm(true);
+    }
+  }, [searchParams]);
 
   const addItemField = () => {
     setNewOrder({
       ...newOrder,
       items: [...newOrder.items, { name: "", quantity: "", unitPrice: "" }],
-    })
-  }
+    });
+  };
 
   const removeItemField = (index: number) => {
-    const items = newOrder.items.filter((_, i) => i !== index)
-    setNewOrder({ ...newOrder, items })
-  }
+    const items = newOrder.items.filter((_, i) => i !== index);
+    setNewOrder({ ...newOrder, items });
+  };
 
   const updateItemField = (index: number, field: string, value: string) => {
-    const items = [...newOrder.items]
-    items[index] = { ...items[index], [field]: value }
-    setNewOrder({ ...newOrder, items })
-  }
+    const items = [...newOrder.items];
+    items[index] = { ...items[index], [field]: value };
+    setNewOrder({ ...newOrder, items });
+  };
 
   const handleSubmitOrder = (e: React.FormEvent) => {
-    e.preventDefault()
-    const supplier = mockSuppliers.find((s) => s.id === newOrder.supplier)
-    if (!supplier) return
+    e.preventDefault();
+    const supplier = mockSuppliers.find((s) => s.id === newOrder.supplier);
+    if (!supplier) return;
 
     const items = newOrder.items.map((item) => ({
       name: item.name,
       quantity: Number.parseInt(item.quantity),
       unitPrice: Number.parseFloat(item.unitPrice),
-    }))
+    }));
 
-    const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
+    const totalAmount = items.reduce(
+      (sum, item) => sum + item.quantity * item.unitPrice,
+      0
+    );
 
     const order: PurchaseOrder = {
       id: `PO-${String(orders.length + 1).padStart(3, "0")}`,
@@ -271,18 +311,18 @@ export default function PurchaseOrdersPage() {
       paymentTerms: newOrder.paymentTerms,
       notes: newOrder.notes,
       supplierPerformance: supplier.performance,
-    }
+    };
 
-    setOrders([order, ...orders])
+    setOrders([order, ...orders]);
     setNewOrder({
       supplier: "",
       items: [{ name: "", quantity: "", unitPrice: "" }],
       expectedDeliveryDate: "",
       paymentTerms: "Net 30",
       notes: "",
-    })
-    setShowForm(false)
-  }
+    });
+    setShowForm(false);
+  };
 
   const updateOrderStatus = (orderId: string, newStatus: POStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
@@ -306,12 +346,16 @@ export default function PurchaseOrdersPage() {
   }
 
   const handlePrintPO = (order: PurchaseOrder) => {
-    alert(`Printing PO ${order.id}...\nThis would generate a PDF in production.`)
-  }
+    alert(
+      `Printing PO ${order.id}...\nThis would generate a PDF in production.`
+    );
+  };
 
   const handleEmailPO = (order: PurchaseOrder) => {
-    alert(`Sending PO ${order.id} to ${order.supplier}...\nThis would send an email in production.`)
-  }
+    alert(
+      `Sending PO ${order.id} to ${order.supplier}...\nThis would send an email in production.`
+    );
+  };
 
   const handleApproveRequest = (requestId: string) => {
     setRequests(requests.map((req) => (req.id === requestId ? { ...req, status: "approved" as RequestStatus } : req)))
@@ -331,12 +375,15 @@ export default function PurchaseOrdersPage() {
     const matchesSearch =
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.items.some((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      order.items.some((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
 
-    return matchesSearch && matchesStatus
-  })
+    return matchesSearch && matchesStatus;
+  });
 
   const filteredRequests = requests.filter((request) => {
     const matchesSearch =
@@ -356,9 +403,9 @@ export default function PurchaseOrdersPage() {
       sent: { variant: "default", className: "bg-blue-500" },
       delivered: { variant: "default", className: "bg-green-500" },
       closed: { variant: "outline", className: "" },
-    }
-    return variants[status]
-  }
+    };
+    return variants[status];
+  };
 
   const getRequestStatusBadge = (status: RequestStatus) => {
     const variants: Record<RequestStatus, { variant: any; className: string }> = {
@@ -380,12 +427,12 @@ export default function PurchaseOrdersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Purchase Orders</h1>
-          <p className="text-muted-foreground mt-1">Create and manage purchase orders sent to suppliers</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+          Purchase Orders
+        </h3>
+
         <Button onClick={() => setShowForm(!showForm)}>
           <Plus className="h-4 w-4 mr-2" />
           New Purchase Order
@@ -627,14 +674,21 @@ export default function PurchaseOrdersPage() {
         <Card>
           <CardHeader>
             <CardTitle>Create New Purchase Order</CardTitle>
-            <CardDescription>Fill in the details to generate a new PO</CardDescription>
+            <CardDescription>
+              Fill in the details to generate a new PO
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmitOrder} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="supplier">Supplier *</Label>
-                  <Select value={newOrder.supplier} onValueChange={(value) => setNewOrder({ ...newOrder, supplier: value })}>
+                  <Select
+                    value={newOrder.supplier}
+                    onValueChange={(value) =>
+                      setNewOrder({ ...newOrder, supplier: value })
+                    }
+                  >
                     <SelectTrigger id="supplier">
                       <SelectValue placeholder="Select supplier (sorted by performance)" />
                     </SelectTrigger>
@@ -643,7 +697,8 @@ export default function PurchaseOrdersPage() {
                         .sort((a, b) => b.performance - a.performance)
                         .map((supplier) => (
                           <SelectItem key={supplier.id} value={supplier.id}>
-                            {supplier.name} (Performance: {supplier.performance}%)
+                            {supplier.name} (Performance: {supplier.performance}
+                            %)
                           </SelectItem>
                         ))}
                     </SelectContent>
@@ -656,7 +711,12 @@ export default function PurchaseOrdersPage() {
                     id="deliveryDate"
                     type="date"
                     value={newOrder.expectedDeliveryDate}
-                    onChange={(e) => setNewOrder({ ...newOrder, expectedDeliveryDate: e.target.value })}
+                    onChange={(e) =>
+                      setNewOrder({
+                        ...newOrder,
+                        expectedDeliveryDate: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
@@ -665,7 +725,9 @@ export default function PurchaseOrdersPage() {
                   <Label htmlFor="paymentTerms">Payment Terms *</Label>
                   <Select
                     value={newOrder.paymentTerms}
-                    onValueChange={(value) => setNewOrder({ ...newOrder, paymentTerms: value })}
+                    onValueChange={(value) =>
+                      setNewOrder({ ...newOrder, paymentTerms: value })
+                    }
                   >
                     <SelectTrigger id="paymentTerms">
                       <SelectValue />
@@ -675,7 +737,9 @@ export default function PurchaseOrdersPage() {
                       <SelectItem value="Net 30">Net 30 Days</SelectItem>
                       <SelectItem value="Net 45">Net 45 Days</SelectItem>
                       <SelectItem value="Net 60">Net 60 Days</SelectItem>
-                      <SelectItem value="Due on Receipt">Due on Receipt</SelectItem>
+                      <SelectItem value="Due on Receipt">
+                        Due on Receipt
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -684,19 +748,29 @@ export default function PurchaseOrdersPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label>Order Items *</Label>
-                  <Button type="button" size="sm" variant="outline" onClick={addItemField}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={addItemField}
+                  >
                     <Plus className="h-4 w-4 mr-1" />
                     Add Item
                   </Button>
                 </div>
 
                 {newOrder.items.map((item, index) => (
-                  <div key={index} className="grid gap-3 md:grid-cols-4 p-3 border rounded-lg">
+                  <div
+                    key={index}
+                    className="grid gap-3 md:grid-cols-4 p-3 border rounded-lg"
+                  >
                     <div className="space-y-1 md:col-span-2">
                       <Input
                         placeholder="Item name"
                         value={item.name}
-                        onChange={(e) => updateItemField(index, "name", e.target.value)}
+                        onChange={(e) =>
+                          updateItemField(index, "name", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -705,21 +779,30 @@ export default function PurchaseOrdersPage() {
                         type="number"
                         placeholder="Quantity"
                         value={item.quantity}
-                        onChange={(e) => updateItemField(index, "quantity", e.target.value)}
+                        onChange={(e) =>
+                          updateItemField(index, "quantity", e.target.value)
+                        }
                         required
                       />
                     </div>
-                      <div className="space-y-1 flex gap-2">
+                    <div className="space-y-1 flex gap-2">
                       <Input
                         type="number"
                         step="0.01"
                         placeholder="Unit Price (LKR)"
                         value={item.unitPrice}
-                        onChange={(e) => updateItemField(index, "unitPrice", e.target.value)}
+                        onChange={(e) =>
+                          updateItemField(index, "unitPrice", e.target.value)
+                        }
                         required
                       />
                       {newOrder.items.length > 1 && (
-                        <Button type="button" size="icon" variant="ghost" onClick={() => removeItemField(index)}>
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => removeItemField(index)}
+                        >
                           <XCircle className="h-4 w-4" />
                         </Button>
                       )}
@@ -734,14 +817,20 @@ export default function PurchaseOrdersPage() {
                   id="notes"
                   placeholder="Add any special instructions or notes..."
                   value={newOrder.notes}
-                  onChange={(e) => setNewOrder({ ...newOrder, notes: e.target.value })}
+                  onChange={(e) =>
+                    setNewOrder({ ...newOrder, notes: e.target.value })
+                  }
                   rows={3}
                 />
               </div>
 
               <div className="flex gap-2">
                 <Button type="submit">Create Purchase Order</Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -750,7 +839,7 @@ export default function PurchaseOrdersPage() {
         </Card>
       )}
 
-      <Card>
+      <Card className="mt-8">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <CardTitle>All Purchase Orders</CardTitle>
@@ -764,7 +853,10 @@ export default function PurchaseOrdersPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value: any) => setStatusFilter(value)}
+              >
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -784,25 +876,55 @@ export default function PurchaseOrdersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">PO ID</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Supplier</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Items</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Amount (LKR)</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Delivery Date</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    PO ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Supplier
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Items
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Total Amount (LKR)
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Delivery Date
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-border last:border-0">
-                    <td className="py-3 px-4 text-sm font-medium text-foreground">{order.id}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{order.supplier}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{order.items.length} item(s)</td>
-                    <td className="py-3 px-4 text-sm text-foreground">LKR {order.totalAmount.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-sm text-foreground">{order.expectedDeliveryDate}</td>
+                  <tr
+                    key={order.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="py-3 px-4 text-sm font-medium text-foreground">
+                      {order.id}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {order.supplier}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {order.items.length} item(s)
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      LKR {order.totalAmount.toFixed(2)}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-foreground">
+                      {order.expectedDeliveryDate}
+                    </td>
                     <td className="py-3 px-4">
-                      <Badge variant={getStatusBadge(order.status).variant} className={getStatusBadge(order.status).className}>
+                      <Badge
+                        variant={getStatusBadge(order.status).variant}
+                        className={getStatusBadge(order.status).className}
+                      >
                         {order.status.toUpperCase()}
                       </Badge>
                     </td>
@@ -810,74 +932,131 @@ export default function PurchaseOrdersPage() {
                       <div className="flex gap-1">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" onClick={() => setSelectedOrder(order)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedOrder(order)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
-                              <DialogTitle>Purchase Order Details - {order.id}</DialogTitle>
-                              <DialogDescription>Complete purchase order information</DialogDescription>
+                              <DialogTitle>
+                                Purchase Order Details - {order.id}
+                              </DialogTitle>
+                              <DialogDescription>
+                                Complete purchase order information
+                              </DialogDescription>
                             </DialogHeader>
                             {selectedOrder && (
                               <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <Label className="text-muted-foreground">Supplier</Label>
-                                    <p className="font-medium">{selectedOrder.supplier}</p>
+                                    <Label className="text-muted-foreground">
+                                      Supplier
+                                    </Label>
+                                    <p className="font-medium">
+                                      {selectedOrder.supplier}
+                                    </p>
                                   </div>
                                   <div>
-                                    <Label className="text-muted-foreground">Status</Label>
+                                    <Label className="text-muted-foreground">
+                                      Status
+                                    </Label>
                                     <div className="mt-1">
                                       <Badge
-                                        variant={getStatusBadge(selectedOrder.status).variant}
-                                        className={getStatusBadge(selectedOrder.status).className}
+                                        variant={
+                                          getStatusBadge(selectedOrder.status)
+                                            .variant
+                                        }
+                                        className={
+                                          getStatusBadge(selectedOrder.status)
+                                            .className
+                                        }
                                       >
                                         {selectedOrder.status.toUpperCase()}
                                       </Badge>
                                     </div>
                                   </div>
                                   <div>
-                                    <Label className="text-muted-foreground">Created Date</Label>
-                                    <p className="font-medium">{selectedOrder.createdDate}</p>
+                                    <Label className="text-muted-foreground">
+                                      Created Date
+                                    </Label>
+                                    <p className="font-medium">
+                                      {selectedOrder.createdDate}
+                                    </p>
                                   </div>
                                   <div>
-                                    <Label className="text-muted-foreground">Expected Delivery</Label>
-                                    <p className="font-medium">{selectedOrder.expectedDeliveryDate}</p>
+                                    <Label className="text-muted-foreground">
+                                      Expected Delivery
+                                    </Label>
+                                    <p className="font-medium">
+                                      {selectedOrder.expectedDeliveryDate}
+                                    </p>
                                   </div>
                                   <div>
-                                    <Label className="text-muted-foreground">Payment Terms</Label>
-                                    <p className="font-medium">{selectedOrder.paymentTerms}</p>
+                                    <Label className="text-muted-foreground">
+                                      Payment Terms
+                                    </Label>
+                                    <p className="font-medium">
+                                      {selectedOrder.paymentTerms}
+                                    </p>
                                   </div>
                                   <div>
-                                    <Label className="text-muted-foreground">Total Amount</Label>
-                                    <p className="font-medium text-lg">LKR {selectedOrder.totalAmount.toFixed(2)}</p>
+                                    <Label className="text-muted-foreground">
+                                      Total Amount
+                                    </Label>
+                                    <p className="font-medium text-lg">
+                                      LKR {selectedOrder.totalAmount.toFixed(2)}
+                                    </p>
                                   </div>
                                 </div>
 
                                 <div>
-                                  <Label className="text-muted-foreground">Order Items</Label>
+                                  <Label className="text-muted-foreground">
+                                    Order Items
+                                  </Label>
                                   <div className="mt-2 border rounded-lg overflow-hidden">
                                     <table className="w-full">
                                       <thead className="bg-muted">
                                         <tr>
-                                          <th className="text-left py-2 px-3 text-sm font-medium">Item Name</th>
-                                          <th className="text-right py-2 px-3 text-sm font-medium">Quantity</th>
-                                          <th className="text-right py-2 px-3 text-sm font-medium">Unit Price</th>
-                                          <th className="text-right py-2 px-3 text-sm font-medium">Total</th>
+                                          <th className="text-left py-2 px-3 text-sm font-medium">
+                                            Item Name
+                                          </th>
+                                          <th className="text-right py-2 px-3 text-sm font-medium">
+                                            Quantity
+                                          </th>
+                                          <th className="text-right py-2 px-3 text-sm font-medium">
+                                            Unit Price
+                                          </th>
+                                          <th className="text-right py-2 px-3 text-sm font-medium">
+                                            Total
+                                          </th>
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        {selectedOrder.items.map((item, idx) => (
-                                          <tr key={idx} className="border-t">
-                                            <td className="py-2 px-3 text-sm">{item.name}</td>
-                                            <td className="py-2 px-3 text-sm text-right">{item.quantity}</td>
-                                            <td className="py-2 px-3 text-sm text-right">LKR {item.unitPrice.toFixed(2)}</td>
-                                            <td className="py-2 px-3 text-sm text-right font-medium">
-                                              LKR {(item.quantity * item.unitPrice).toFixed(2)}
-                                            </td>
-                                          </tr>
-                                        ))}
+                                        {selectedOrder.items.map(
+                                          (item, idx) => (
+                                            <tr key={idx} className="border-t">
+                                              <td className="py-2 px-3 text-sm">
+                                                {item.name}
+                                              </td>
+                                              <td className="py-2 px-3 text-sm text-right">
+                                                {item.quantity}
+                                              </td>
+                                              <td className="py-2 px-3 text-sm text-right">
+                                                LKR {item.unitPrice.toFixed(2)}
+                                              </td>
+                                              <td className="py-2 px-3 text-sm text-right font-medium">
+                                                LKR{" "}
+                                                {(
+                                                  item.quantity * item.unitPrice
+                                                ).toFixed(2)}
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
                                       </tbody>
                                     </table>
                                   </div>
@@ -885,17 +1064,29 @@ export default function PurchaseOrdersPage() {
 
                                 {selectedOrder.notes && (
                                   <div>
-                                    <Label className="text-muted-foreground">Notes</Label>
-                                    <p className="mt-1 text-sm">{selectedOrder.notes}</p>
+                                    <Label className="text-muted-foreground">
+                                      Notes
+                                    </Label>
+                                    <p className="mt-1 text-sm">
+                                      {selectedOrder.notes}
+                                    </p>
                                   </div>
                                 )}
 
                                 <div className="flex gap-2 pt-4 border-t">
-                                  <Button size="sm" variant="outline" onClick={() => handlePrintPO(selectedOrder)}>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handlePrintPO(selectedOrder)}
+                                  >
                                     <Printer className="h-4 w-4 mr-2" />
                                     Print PO
                                   </Button>
-                                  <Button size="sm" variant="outline" onClick={() => handleEmailPO(selectedOrder)}>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleEmailPO(selectedOrder)}
+                                  >
                                     <Mail className="h-4 w-4 mr-2" />
                                     Email to Supplier
                                   </Button>
@@ -986,5 +1177,5 @@ export default function PurchaseOrdersPage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

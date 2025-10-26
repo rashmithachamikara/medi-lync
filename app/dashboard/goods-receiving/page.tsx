@@ -1,57 +1,85 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, Package, AlertTriangle, CheckCircle, Upload, Eye, FileText, XCircle } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Search,
+  Package,
+  AlertTriangle,
+  CheckCircle,
+  Upload,
+  Eye,
+  FileText,
+  XCircle,
+} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type ReceivingStatus = "pending" | "partial" | "completed" | "discrepancy"
-type DiscrepancyType = "shortage" | "damage" | "quality-issue" | "wrong-item"
+type ReceivingStatus = "pending" | "partial" | "completed" | "discrepancy";
+type DiscrepancyType = "shortage" | "damage" | "quality-issue" | "wrong-item";
 
 interface PurchaseOrder {
-  id: string
-  supplier: string
+  id: string;
+  supplier: string;
   items: Array<{
-    name: string
-    orderedQuantity: number
-    receivedQuantity: number
-  }>
-  expectedDeliveryDate: string
-  status: "sent" | "delivered"
+    name: string;
+    orderedQuantity: number;
+    receivedQuantity: number;
+  }>;
+  expectedDeliveryDate: string;
+  status: "sent" | "delivered";
 }
 
 interface GoodsReceipt {
-  id: string
-  poId: string
-  supplier: string
-  receivedDate: string
+  id: string;
+  poId: string;
+  supplier: string;
+  receivedDate: string;
   items: Array<{
-    name: string
-    orderedQuantity: number
-    receivedQuantity: number
-    acceptedQuantity: number
-    rejectedQuantity: number
-    notes: string
-  }>
-  status: ReceivingStatus
+    name: string;
+    orderedQuantity: number;
+    receivedQuantity: number;
+    acceptedQuantity: number;
+    rejectedQuantity: number;
+    notes: string;
+  }>;
+  status: ReceivingStatus;
   discrepancies: Array<{
-    type: DiscrepancyType
-    item: string
-    description: string
-  }>
-  deliveryNoteUrl?: string
-  invoiceUrl?: string
-  inspector: string
-  notes: string
+    type: DiscrepancyType;
+    item: string;
+    description: string;
+  }>;
+  deliveryNoteUrl?: string;
+  invoiceUrl?: string;
+  inspector: string;
+  notes: string;
 }
 
 const mockPendingPOs: PurchaseOrder[] = [
@@ -68,11 +96,13 @@ const mockPendingPOs: PurchaseOrder[] = [
   {
     id: "PO-002",
     supplier: "PharmaCorp",
-    items: [{ name: "Amoxicillin 250mg", orderedQuantity: 500, receivedQuantity: 0 }],
+    items: [
+      { name: "Amoxicillin 250mg", orderedQuantity: 500, receivedQuantity: 0 },
+    ],
     expectedDeliveryDate: "2025-01-20",
     status: "sent",
   },
-]
+];
 
 const mockReceipts: GoodsReceipt[] = [
   {
@@ -125,7 +155,8 @@ const mockReceipts: GoodsReceipt[] = [
       {
         type: "shortage",
         item: "Ibuprofen 400mg",
-        description: "Received 700 units instead of 750 ordered. 50 units short.",
+        description:
+          "Received 700 units instead of 750 ordered. 50 units short.",
       },
       {
         type: "damage",
@@ -137,33 +168,39 @@ const mockReceipts: GoodsReceipt[] = [
     inspector: "Sarah Johnson",
     notes: "Contacted supplier about shortage and damaged goods",
   },
-]
+];
 
 export default function GoodsReceivingPage() {
-  const [pendingPOs] = useState(mockPendingPOs)
-  const [receipts, setReceipts] = useState(mockReceipts)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [showReceivingForm, setShowReceivingForm] = useState(false)
-  const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null)
-  const [selectedReceipt, setSelectedReceipt] = useState<GoodsReceipt | null>(null)
+  const [pendingPOs] = useState(mockPendingPOs);
+  const [receipts, setReceipts] = useState(mockReceipts);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showReceivingForm, setShowReceivingForm] = useState(false);
+  const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<GoodsReceipt | null>(
+    null
+  );
   const [receivingData, setReceivingData] = useState({
     items: [] as Array<{
-      name: string
-      orderedQuantity: number
-      receivedQuantity: string
-      acceptedQuantity: string
-      rejectedQuantity: string
-      notes: string
+      name: string;
+      orderedQuantity: number;
+      receivedQuantity: string;
+      acceptedQuantity: string;
+      rejectedQuantity: string;
+      notes: string;
     }>,
-    discrepancies: [] as Array<{ type: DiscrepancyType; item: string; description: string }>,
+    discrepancies: [] as Array<{
+      type: DiscrepancyType;
+      item: string;
+      description: string;
+    }>,
     inspector: "",
     notes: "",
     deliveryNote: null as File | null,
     invoice: null as File | null,
-  })
+  });
 
   const startReceiving = (po: PurchaseOrder) => {
-    setSelectedPO(po)
+    setSelectedPO(po);
     setReceivingData({
       items: po.items.map((item) => ({
         name: item.name,
@@ -178,23 +215,23 @@ export default function GoodsReceivingPage() {
       notes: "",
       deliveryNote: null,
       invoice: null,
-    })
-    setShowReceivingForm(true)
-  }
+    });
+    setShowReceivingForm(true);
+  };
 
   const updateItemField = (index: number, field: string, value: string) => {
-    const items = [...receivingData.items]
-    items[index] = { ...items[index], [field]: value }
+    const items = [...receivingData.items];
+    items[index] = { ...items[index], [field]: value };
 
     // Auto-calculate accepted quantity
     if (field === "receivedQuantity" || field === "rejectedQuantity") {
-      const received = Number.parseInt(items[index].receivedQuantity || "0")
-      const rejected = Number.parseInt(items[index].rejectedQuantity || "0")
-      items[index].acceptedQuantity = String(Math.max(0, received - rejected))
+      const received = Number.parseInt(items[index].receivedQuantity || "0");
+      const rejected = Number.parseInt(items[index].rejectedQuantity || "0");
+      items[index].acceptedQuantity = String(Math.max(0, received - rejected));
     }
 
-    setReceivingData({ ...receivingData, items })
-  }
+    setReceivingData({ ...receivingData, items });
+  };
 
   const addDiscrepancy = () => {
     setReceivingData({
@@ -203,39 +240,44 @@ export default function GoodsReceivingPage() {
         ...receivingData.discrepancies,
         { type: "shortage" as DiscrepancyType, item: "", description: "" },
       ],
-    })
-  }
+    });
+  };
 
   const updateDiscrepancy = (index: number, field: string, value: string) => {
-    const discrepancies = [...receivingData.discrepancies]
-    discrepancies[index] = { ...discrepancies[index], [field]: value }
-    setReceivingData({ ...receivingData, discrepancies })
-  }
+    const discrepancies = [...receivingData.discrepancies];
+    discrepancies[index] = { ...discrepancies[index], [field]: value };
+    setReceivingData({ ...receivingData, discrepancies });
+  };
 
   const removeDiscrepancy = (index: number) => {
-    const discrepancies = receivingData.discrepancies.filter((_, i) => i !== index)
-    setReceivingData({ ...receivingData, discrepancies })
-  }
+    const discrepancies = receivingData.discrepancies.filter(
+      (_, i) => i !== index
+    );
+    setReceivingData({ ...receivingData, discrepancies });
+  };
 
-  const handleFileUpload = (type: "deliveryNote" | "invoice", file: File | null) => {
-    setReceivingData({ ...receivingData, [type]: file })
-  }
+  const handleFileUpload = (
+    type: "deliveryNote" | "invoice",
+    file: File | null
+  ) => {
+    setReceivingData({ ...receivingData, [type]: file });
+  };
 
   const handleSubmitReceipt = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedPO) return
+    e.preventDefault();
+    if (!selectedPO) return;
 
     // Determine status
-    let status: ReceivingStatus = "completed"
-    const hasDiscrepancies = receivingData.discrepancies.length > 0
+    let status: ReceivingStatus = "completed";
+    const hasDiscrepancies = receivingData.discrepancies.length > 0;
     const allItemsReceived = receivingData.items.every(
-      (item) => Number.parseInt(item.receivedQuantity) === item.orderedQuantity,
-    )
+      (item) => Number.parseInt(item.receivedQuantity) === item.orderedQuantity
+    );
 
     if (hasDiscrepancies) {
-      status = "discrepancy"
+      status = "discrepancy";
     } else if (!allItemsReceived) {
-      status = "partial"
+      status = "partial";
     }
 
     const receipt: GoodsReceipt = {
@@ -253,59 +295,75 @@ export default function GoodsReceivingPage() {
       })),
       status,
       discrepancies: receivingData.discrepancies,
-      deliveryNoteUrl: receivingData.deliveryNote ? `/docs/dn-${Date.now()}.pdf` : undefined,
-      invoiceUrl: receivingData.invoice ? `/docs/inv-${Date.now()}.pdf` : undefined,
+      deliveryNoteUrl: receivingData.deliveryNote
+        ? `/docs/dn-${Date.now()}.pdf`
+        : undefined,
+      invoiceUrl: receivingData.invoice
+        ? `/docs/inv-${Date.now()}.pdf`
+        : undefined,
       inspector: receivingData.inspector,
       notes: receivingData.notes,
-    }
+    };
 
-    setReceipts([receipt, ...receipts])
-    setShowReceivingForm(false)
-    setSelectedPO(null)
+    setReceipts([receipt, ...receipts]);
+    setShowReceivingForm(false);
+    setSelectedPO(null);
 
     // Show success message
     alert(
-      `Goods receipt ${receipt.id} created successfully!\n\nInventory would be automatically updated in production.\n\nStatus: ${status.toUpperCase()}`,
-    )
-  }
+      `Goods receipt ${
+        receipt.id
+      } created successfully!\n\nInventory would be automatically updated in production.\n\nStatus: ${status.toUpperCase()}`
+    );
+  };
 
   const filteredReceipts = receipts.filter(
     (receipt) =>
       receipt.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       receipt.poId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      receipt.supplier.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      receipt.supplier.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusBadge = (status: ReceivingStatus) => {
-    const variants: Record<ReceivingStatus, { variant: any; className: string }> = {
+    const variants: Record<
+      ReceivingStatus,
+      { variant: any; className: string }
+    > = {
       pending: { variant: "secondary", className: "bg-yellow-500" },
       partial: { variant: "default", className: "bg-orange-500" },
       completed: { variant: "default", className: "bg-green-500" },
       discrepancy: { variant: "destructive", className: "bg-red-500" },
-    }
-    return variants[status]
-  }
+    };
+    return variants[status];
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Goods Receiving</h1>
-          <p className="text-muted-foreground mt-1">Record and verify incoming deliveries against purchase orders</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 flex items-center justify-between">
+        
+          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-700 dark:from-white dark:to-slate-300">
+            Goods Receiving
+          </h3>
+        
       </div>
 
       <Tabs defaultValue="pending" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="pending">Pending Deliveries ({pendingPOs.length})</TabsTrigger>
-          <TabsTrigger value="received">Received Goods ({receipts.length})</TabsTrigger>
+          <TabsTrigger value="pending">
+            Pending Deliveries ({pendingPOs.length})
+          </TabsTrigger>
+          <TabsTrigger value="received">
+            Received Goods ({receipts.length})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Expected Deliveries</CardTitle>
-              <CardDescription>Purchase orders awaiting delivery</CardDescription>
+              <CardDescription>
+                Purchase orders awaiting delivery
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -314,19 +372,28 @@ export default function GoodsReceivingPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="font-semibold text-lg">{po.id}</h3>
-                        <p className="text-sm text-muted-foreground">{po.supplier}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {po.supplier}
+                        </p>
                       </div>
-                      <Badge variant="outline">Expected: {po.expectedDeliveryDate}</Badge>
+                      <Badge variant="outline">
+                        Expected: {po.expectedDeliveryDate}
+                      </Badge>
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-muted-foreground text-xs">Items:</Label>
+                      <Label className="text-muted-foreground text-xs">
+                        Items:
+                      </Label>
                       {po.items.map((item, idx) => (
                         <div key={idx} className="text-sm">
                           • {item.name} - Quantity: {item.orderedQuantity}
                         </div>
                       ))}
                     </div>
-                    <Button onClick={() => startReceiving(po)} className="w-full">
+                    <Button
+                      onClick={() => startReceiving(po)}
+                      className="w-full"
+                    >
                       <Package className="h-4 w-4 mr-2" />
                       Record Delivery
                     </Button>
@@ -358,23 +425,50 @@ export default function GoodsReceivingPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Receipt ID</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">PO ID</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Supplier</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Received Date</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Items</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Receipt ID
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        PO ID
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Supplier
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Received Date
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Items
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Status
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredReceipts.map((receipt) => (
-                      <tr key={receipt.id} className="border-b border-border last:border-0">
-                        <td className="py-3 px-4 text-sm font-medium text-foreground">{receipt.id}</td>
-                        <td className="py-3 px-4 text-sm text-foreground">{receipt.poId}</td>
-                        <td className="py-3 px-4 text-sm text-foreground">{receipt.supplier}</td>
-                        <td className="py-3 px-4 text-sm text-foreground">{receipt.receivedDate}</td>
-                        <td className="py-3 px-4 text-sm text-foreground">{receipt.items.length} item(s)</td>
+                      <tr
+                        key={receipt.id}
+                        className="border-b border-border last:border-0"
+                      >
+                        <td className="py-3 px-4 text-sm font-medium text-foreground">
+                          {receipt.id}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {receipt.poId}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {receipt.supplier}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {receipt.receivedDate}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-foreground">
+                          {receipt.items.length} item(s)
+                        </td>
                         <td className="py-3 px-4">
                           <Badge
                             variant={getStatusBadge(receipt.status).variant}
@@ -386,40 +480,75 @@ export default function GoodsReceivingPage() {
                         <td className="py-3 px-4">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button size="sm" variant="outline" onClick={() => setSelectedReceipt(receipt)}>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setSelectedReceipt(receipt)}
+                              >
                                 <Eye className="h-4 w-4" />
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                               <DialogHeader>
-                                <DialogTitle>Goods Receipt Details - {receipt.id}</DialogTitle>
-                                <DialogDescription>Complete receiving information and verification results</DialogDescription>
+                                <DialogTitle>
+                                  Goods Receipt Details - {receipt.id}
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Complete receiving information and
+                                  verification results
+                                </DialogDescription>
                               </DialogHeader>
                               {selectedReceipt && (
                                 <div className="space-y-4">
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <Label className="text-muted-foreground">Purchase Order</Label>
-                                      <p className="font-medium">{selectedReceipt.poId}</p>
+                                      <Label className="text-muted-foreground">
+                                        Purchase Order
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedReceipt.poId}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Supplier</Label>
-                                      <p className="font-medium">{selectedReceipt.supplier}</p>
+                                      <Label className="text-muted-foreground">
+                                        Supplier
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedReceipt.supplier}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Received Date</Label>
-                                      <p className="font-medium">{selectedReceipt.receivedDate}</p>
+                                      <Label className="text-muted-foreground">
+                                        Received Date
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedReceipt.receivedDate}
+                                      </p>
                                     </div>
                                     <div>
-                                      <Label className="text-muted-foreground">Inspector</Label>
-                                      <p className="font-medium">{selectedReceipt.inspector}</p>
+                                      <Label className="text-muted-foreground">
+                                        Inspector
+                                      </Label>
+                                      <p className="font-medium">
+                                        {selectedReceipt.inspector}
+                                      </p>
                                     </div>
                                     <div className="col-span-2">
-                                      <Label className="text-muted-foreground">Status</Label>
+                                      <Label className="text-muted-foreground">
+                                        Status
+                                      </Label>
                                       <div className="mt-1">
                                         <Badge
-                                          variant={getStatusBadge(selectedReceipt.status).variant}
-                                          className={getStatusBadge(selectedReceipt.status).className}
+                                          variant={
+                                            getStatusBadge(
+                                              selectedReceipt.status
+                                            ).variant
+                                          }
+                                          className={
+                                            getStatusBadge(
+                                              selectedReceipt.status
+                                            ).className
+                                          }
                                         >
                                           {selectedReceipt.status.toUpperCase()}
                                         </Badge>
@@ -428,34 +557,61 @@ export default function GoodsReceivingPage() {
                                   </div>
 
                                   <div>
-                                    <Label className="text-muted-foreground">Items Received</Label>
+                                    <Label className="text-muted-foreground">
+                                      Items Received
+                                    </Label>
                                     <div className="mt-2 border rounded-lg overflow-hidden">
                                       <table className="w-full">
                                         <thead className="bg-muted">
                                           <tr>
-                                            <th className="text-left py-2 px-3 text-sm font-medium">Item</th>
-                                            <th className="text-right py-2 px-3 text-sm font-medium">Ordered</th>
-                                            <th className="text-right py-2 px-3 text-sm font-medium">Received</th>
-                                            <th className="text-right py-2 px-3 text-sm font-medium">Accepted</th>
-                                            <th className="text-right py-2 px-3 text-sm font-medium">Rejected</th>
-                                            <th className="text-left py-2 px-3 text-sm font-medium">Notes</th>
+                                            <th className="text-left py-2 px-3 text-sm font-medium">
+                                              Item
+                                            </th>
+                                            <th className="text-right py-2 px-3 text-sm font-medium">
+                                              Ordered
+                                            </th>
+                                            <th className="text-right py-2 px-3 text-sm font-medium">
+                                              Received
+                                            </th>
+                                            <th className="text-right py-2 px-3 text-sm font-medium">
+                                              Accepted
+                                            </th>
+                                            <th className="text-right py-2 px-3 text-sm font-medium">
+                                              Rejected
+                                            </th>
+                                            <th className="text-left py-2 px-3 text-sm font-medium">
+                                              Notes
+                                            </th>
                                           </tr>
                                         </thead>
                                         <tbody>
-                                          {selectedReceipt.items.map((item, idx) => (
-                                            <tr key={idx} className="border-t">
-                                              <td className="py-2 px-3 text-sm">{item.name}</td>
-                                              <td className="py-2 px-3 text-sm text-right">{item.orderedQuantity}</td>
-                                              <td className="py-2 px-3 text-sm text-right">{item.receivedQuantity}</td>
-                                              <td className="py-2 px-3 text-sm text-right text-green-600 font-medium">
-                                                {item.acceptedQuantity}
-                                              </td>
-                                              <td className="py-2 px-3 text-sm text-right text-red-600 font-medium">
-                                                {item.rejectedQuantity}
-                                              </td>
-                                              <td className="py-2 px-3 text-sm">{item.notes || "-"}</td>
-                                            </tr>
-                                          ))}
+                                          {selectedReceipt.items.map(
+                                            (item, idx) => (
+                                              <tr
+                                                key={idx}
+                                                className="border-t"
+                                              >
+                                                <td className="py-2 px-3 text-sm">
+                                                  {item.name}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right">
+                                                  {item.orderedQuantity}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right">
+                                                  {item.receivedQuantity}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right text-green-600 font-medium">
+                                                  {item.acceptedQuantity}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right text-red-600 font-medium">
+                                                  {item.rejectedQuantity}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm">
+                                                  {item.notes || "-"}
+                                                </td>
+                                              </tr>
+                                            )
+                                          )}
                                         </tbody>
                                       </table>
                                     </div>
@@ -468,32 +624,50 @@ export default function GoodsReceivingPage() {
                                         Discrepancies Found
                                       </Label>
                                       <div className="mt-2 space-y-2">
-                                        {selectedReceipt.discrepancies.map((disc, idx) => (
-                                          <div key={idx} className="border border-yellow-600 rounded-lg p-3 bg-yellow-50 dark:bg-yellow-950">
-                                            <div className="flex items-start gap-2">
-                                              <Badge variant="outline" className="mt-0.5">
-                                                {disc.type}
-                                              </Badge>
-                                              <div className="flex-1">
-                                                <p className="font-medium text-sm">{disc.item}</p>
-                                                <p className="text-sm text-muted-foreground">{disc.description}</p>
+                                        {selectedReceipt.discrepancies.map(
+                                          (disc, idx) => (
+                                            <div
+                                              key={idx}
+                                              className="border border-yellow-600 rounded-lg p-3 bg-yellow-50 dark:bg-yellow-950"
+                                            >
+                                              <div className="flex items-start gap-2">
+                                                <Badge
+                                                  variant="outline"
+                                                  className="mt-0.5"
+                                                >
+                                                  {disc.type}
+                                                </Badge>
+                                                <div className="flex-1">
+                                                  <p className="font-medium text-sm">
+                                                    {disc.item}
+                                                  </p>
+                                                  <p className="text-sm text-muted-foreground">
+                                                    {disc.description}
+                                                  </p>
+                                                </div>
                                               </div>
                                             </div>
-                                          </div>
-                                        ))}
+                                          )
+                                        )}
                                       </div>
                                     </div>
                                   )}
 
                                   {selectedReceipt.notes && (
                                     <div>
-                                      <Label className="text-muted-foreground">Inspector Notes</Label>
-                                      <p className="mt-1 text-sm">{selectedReceipt.notes}</p>
+                                      <Label className="text-muted-foreground">
+                                        Inspector Notes
+                                      </Label>
+                                      <p className="mt-1 text-sm">
+                                        {selectedReceipt.notes}
+                                      </p>
                                     </div>
                                   )}
 
                                   <div>
-                                    <Label className="text-muted-foreground">Documents</Label>
+                                    <Label className="text-muted-foreground">
+                                      Documents
+                                    </Label>
                                     <div className="mt-2 flex gap-2">
                                       {selectedReceipt.deliveryNoteUrl && (
                                         <Button size="sm" variant="outline">
@@ -541,7 +715,12 @@ export default function GoodsReceivingPage() {
                   id="inspector"
                   placeholder="Enter inspector name"
                   value={receivingData.inspector}
-                  onChange={(e) => setReceivingData({ ...receivingData, inspector: e.target.value })}
+                  onChange={(e) =>
+                    setReceivingData({
+                      ...receivingData,
+                      inspector: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -555,39 +734,67 @@ export default function GoodsReceivingPage() {
                     <div className="font-medium">{item.name}</div>
                     <div className="grid gap-3 md:grid-cols-4">
                       <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Ordered Qty</Label>
+                        <Label className="text-xs text-muted-foreground">
+                          Ordered Qty
+                        </Label>
                         <Input value={item.orderedQuantity} disabled />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Received Qty *</Label>
+                        <Label className="text-xs text-muted-foreground">
+                          Received Qty *
+                        </Label>
                         <Input
                           type="number"
                           placeholder="0"
                           value={item.receivedQuantity}
-                          onChange={(e) => updateItemField(index, "receivedQuantity", e.target.value)}
+                          onChange={(e) =>
+                            updateItemField(
+                              index,
+                              "receivedQuantity",
+                              e.target.value
+                            )
+                          }
                           required
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Rejected Qty</Label>
+                        <Label className="text-xs text-muted-foreground">
+                          Rejected Qty
+                        </Label>
                         <Input
                           type="number"
                           placeholder="0"
                           value={item.rejectedQuantity}
-                          onChange={(e) => updateItemField(index, "rejectedQuantity", e.target.value)}
+                          onChange={(e) =>
+                            updateItemField(
+                              index,
+                              "rejectedQuantity",
+                              e.target.value
+                            )
+                          }
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Accepted Qty</Label>
-                        <Input value={item.acceptedQuantity} disabled className="bg-green-50 dark:bg-green-950" />
+                        <Label className="text-xs text-muted-foreground">
+                          Accepted Qty
+                        </Label>
+                        <Input
+                          value={item.acceptedQuantity}
+                          disabled
+                          className="bg-green-50 dark:bg-green-950"
+                        />
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-xs text-muted-foreground">Item Notes</Label>
+                      <Label className="text-xs text-muted-foreground">
+                        Item Notes
+                      </Label>
                       <Input
                         placeholder="Any observations about this item..."
                         value={item.notes}
-                        onChange={(e) => updateItemField(index, "notes", e.target.value)}
+                        onChange={(e) =>
+                          updateItemField(index, "notes", e.target.value)
+                        }
                       />
                     </div>
                   </div>
@@ -598,18 +805,28 @@ export default function GoodsReceivingPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label>Discrepancies (if any)</Label>
-                <Button type="button" size="sm" variant="outline" onClick={addDiscrepancy}>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addDiscrepancy}
+                >
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   Add Discrepancy
                 </Button>
               </div>
               <div className="space-y-2">
                 {receivingData.discrepancies.map((disc, index) => (
-                  <div key={index} className="border border-yellow-600 rounded-lg p-3 space-y-2">
+                  <div
+                    key={index}
+                    className="border border-yellow-600 rounded-lg p-3 space-y-2"
+                  >
                     <div className="grid gap-2 md:grid-cols-3">
                       <Select
                         value={disc.type}
-                        onValueChange={(value) => updateDiscrepancy(index, "type", value)}
+                        onValueChange={(value) =>
+                          updateDiscrepancy(index, "type", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Type" />
@@ -617,23 +834,34 @@ export default function GoodsReceivingPage() {
                         <SelectContent>
                           <SelectItem value="shortage">Shortage</SelectItem>
                           <SelectItem value="damage">Damage</SelectItem>
-                          <SelectItem value="quality-issue">Quality Issue</SelectItem>
+                          <SelectItem value="quality-issue">
+                            Quality Issue
+                          </SelectItem>
                           <SelectItem value="wrong-item">Wrong Item</SelectItem>
                         </SelectContent>
                       </Select>
                       <Input
                         placeholder="Item name"
                         value={disc.item}
-                        onChange={(e) => updateDiscrepancy(index, "item", e.target.value)}
+                        onChange={(e) =>
+                          updateDiscrepancy(index, "item", e.target.value)
+                        }
                       />
-                      <Button type="button" size="icon" variant="ghost" onClick={() => removeDiscrepancy(index)}>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => removeDiscrepancy(index)}
+                      >
                         <XCircle className="h-4 w-4" />
                       </Button>
                     </div>
                     <Textarea
                       placeholder="Describe the discrepancy..."
                       value={disc.description}
-                      onChange={(e) => updateDiscrepancy(index, "description", e.target.value)}
+                      onChange={(e) =>
+                        updateDiscrepancy(index, "description", e.target.value)
+                      }
                       rows={2}
                     />
                   </div>
@@ -648,7 +876,12 @@ export default function GoodsReceivingPage() {
                   id="deliveryNote"
                   type="file"
                   accept=".pdf"
-                  onChange={(e) => handleFileUpload("deliveryNote", e.target.files?.[0] || null)}
+                  onChange={(e) =>
+                    handleFileUpload(
+                      "deliveryNote",
+                      e.target.files?.[0] || null
+                    )
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -657,7 +890,9 @@ export default function GoodsReceivingPage() {
                   id="invoice"
                   type="file"
                   accept=".pdf"
-                  onChange={(e) => handleFileUpload("invoice", e.target.files?.[0] || null)}
+                  onChange={(e) =>
+                    handleFileUpload("invoice", e.target.files?.[0] || null)
+                  }
                 />
               </div>
             </div>
@@ -668,7 +903,9 @@ export default function GoodsReceivingPage() {
                 id="notes"
                 placeholder="Add any additional notes about this delivery..."
                 value={receivingData.notes}
-                onChange={(e) => setReceivingData({ ...receivingData, notes: e.target.value })}
+                onChange={(e) =>
+                  setReceivingData({ ...receivingData, notes: e.target.value })
+                }
                 rows={3}
               />
             </div>
@@ -682,8 +919,8 @@ export default function GoodsReceivingPage() {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setShowReceivingForm(false)
-                  setSelectedPO(null)
+                  setShowReceivingForm(false);
+                  setSelectedPO(null);
                 }}
               >
                 Cancel
@@ -693,5 +930,5 @@ export default function GoodsReceivingPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
