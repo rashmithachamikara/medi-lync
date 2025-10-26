@@ -33,15 +33,15 @@ import {
  
 
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Purchase Orders", href: "/dashboard/purchaseOrders", icon: FileText },
-  { name: "Goods Receiving", href: "/dashboard/goods-receiving", icon: PackageCheck },
-  { name: "Suppliers", href: "/dashboard/suppliers", icon: Building2 },
-  { name: "Stock Control", href: "/dashboard/stock", icon: Package },
-  { name: "Collections", href: "/dashboard/collections", icon: DollarSign },
-  { name: "HR Management", href: "/dashboard/hr", icon: Users },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+const allNavigation = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["pharmacist", "manager", "admin"] },
+  { name: "Purchase Orders", href: "/dashboard/purchaseOrders", icon: FileText, roles: ["pharmacist", "manager", "admin"] },
+  { name: "Goods Receiving", href: "/dashboard/goods-receiving", icon: PackageCheck, roles: ["pharmacist", "manager", "admin"] },
+  { name: "Suppliers", href: "/dashboard/suppliers", icon: Building2, roles: ["manager", "admin"] },
+  { name: "Stock Control", href: "/dashboard/stock", icon: Package, roles: ["pharmacist", "manager", "admin"] },
+  { name: "Collections", href: "/dashboard/collections", icon: DollarSign, roles: ["manager", "admin"] },
+  { name: "HR Management", href: "/dashboard/hr", icon: Users, roles: ["manager", "admin"] },
+  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3, roles: ["manager", "admin"] },
 ];
 
 export default function DashboardLayout({
@@ -54,13 +54,21 @@ export default function DashboardLayout({
   const [user, setUser] = useState<any>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [navigation, setNavigation] = useState(allNavigation);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
       router.push("/");
     } else {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      
+      // Filter navigation based on user role
+      const filteredNav = allNavigation.filter(item => 
+        item.roles.includes(parsedUser.role)
+      );
+      setNavigation(filteredNav);
     }
 
     const storedTheme = localStorage.getItem("theme") as
