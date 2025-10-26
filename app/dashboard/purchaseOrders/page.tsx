@@ -11,10 +11,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Search, Plus, Printer, Mail, Eye, Edit, Send, CheckCircle, XCircle } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type POStatus = "draft" | "sent" | "delivered" | "closed"
+type RequestStatus = "pending" | "approved" | "declined"
 
 interface PurchaseOrder {
   id: string
@@ -32,6 +43,23 @@ interface PurchaseOrder {
   paymentTerms: string
   notes: string
   supplierPerformance: number
+}
+
+interface PurchaseRequest {
+  id: string
+  requestedBy: string
+  department: string
+  items: Array<{
+    name: string
+    quantity: number
+    estimatedUnitPrice: number
+  }>
+  totalEstimate: number
+  status: RequestStatus
+  requestDate: string
+  requiredBy: string
+  priority: "low" | "medium" | "high" | "urgent"
+  justification: string
 }
 
 const mockSuppliers = [
@@ -102,12 +130,96 @@ const mockOrders: PurchaseOrder[] = [
   },
 ]
 
+const mockRequests: PurchaseRequest[] = [
+  {
+    id: "PR-001",
+    requestedBy: "Dr. Sarah Johnson",
+    department: "Emergency Department",
+    items: [
+      { name: "Paracetamol 500mg", quantity: 2000, estimatedUnitPrice: 0.15 },
+      { name: "Ibuprofen 400mg", quantity: 1500, estimatedUnitPrice: 0.28 },
+    ],
+    totalEstimate: 720,
+    status: "pending",
+    requestDate: "2025-10-25",
+    requiredBy: "2025-11-05",
+    priority: "urgent",
+    justification: "Current stock running critically low. Need immediate replenishment for patient care.",
+  },
+  {
+    id: "PR-002",
+    requestedBy: "Dr. Michael Chen",
+    department: "Cardiology",
+    items: [
+      { name: "Atorvastatin 20mg", quantity: 1000, estimatedUnitPrice: 0.55 },
+      { name: "Metoprolol 50mg", quantity: 800, estimatedUnitPrice: 0.32 },
+    ],
+    totalEstimate: 806,
+    status: "pending",
+    requestDate: "2025-10-24",
+    requiredBy: "2025-11-10",
+    priority: "high",
+    justification: "Regular stock replenishment for chronic disease management program.",
+  },
+  {
+    id: "PR-003",
+    requestedBy: "Nurse Emma Williams",
+    department: "General Ward",
+    items: [
+      { name: "Bandages (5cm x 5m)", quantity: 500, estimatedUnitPrice: 1.2 },
+      { name: "Gauze Pads", quantity: 1000, estimatedUnitPrice: 0.5 },
+    ],
+    totalEstimate: 1100,
+    status: "pending",
+    requestDate: "2025-10-23",
+    requiredBy: "2025-11-15",
+    priority: "medium",
+    justification: "Routine supplies for wound care and dressing changes.",
+  },
+  {
+    id: "PR-004",
+    requestedBy: "Dr. James Wilson",
+    department: "Pediatrics",
+    items: [
+      { name: "Amoxicillin Suspension 250mg/5ml", quantity: 200, estimatedUnitPrice: 3.5 },
+    ],
+    totalEstimate: 700,
+    status: "approved",
+    requestDate: "2025-10-20",
+    requiredBy: "2025-11-01",
+    priority: "high",
+    justification: "Increased cases of bacterial infections in pediatric patients.",
+  },
+  {
+    id: "PR-005",
+    requestedBy: "Dr. Lisa Anderson",
+    department: "Surgery",
+    items: [
+      { name: "Surgical Gloves (Size M)", quantity: 5000, estimatedUnitPrice: 0.25 },
+    ],
+    totalEstimate: 1250,
+    status: "declined",
+    requestDate: "2025-10-18",
+    requiredBy: "2025-10-30",
+    priority: "low",
+    justification: "Stock replenishment.",
+  },
+]
+
 export default function PurchaseOrdersPage() {
   const [orders, setOrders] = useState(mockOrders)
+  const [requests, setRequests] = useState(mockRequests)
   const [searchTerm, setSearchTerm] = useState("")
+  const [requestSearchTerm, setRequestSearchTerm] = useState("")
   const [showForm, setShowForm] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null)
+  const [selectedRequest, setSelectedRequest] = useState<PurchaseRequest | null>(null)
   const [statusFilter, setStatusFilter] = useState<POStatus | "all">("all")
+  const [requestStatusFilter, setRequestStatusFilter] = useState<RequestStatus | "all">("all")
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "send" | "deliver" | "close" | null
+    orderId: string | null
+  }>({ type: null, orderId: null })
   const [newOrder, setNewOrder] = useState({
     supplier: "",
     items: [{ name: "", quantity: "", unitPrice: "" }],
@@ -174,6 +286,23 @@ export default function PurchaseOrdersPage() {
 
   const updateOrderStatus = (orderId: string, newStatus: POStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
+    setConfirmAction({ type: null, orderId: null })
+  }
+
+  const handleConfirmAction = () => {
+    if (confirmAction.orderId && confirmAction.type) {
+      switch (confirmAction.type) {
+        case "send":
+          updateOrderStatus(confirmAction.orderId, "sent")
+          break
+        case "deliver":
+          updateOrderStatus(confirmAction.orderId, "delivered")
+          break
+        case "close":
+          updateOrderStatus(confirmAction.orderId, "closed")
+          break
+      }
+    }
   }
 
   const handlePrintPO = (order: PurchaseOrder) => {
@@ -184,6 +313,20 @@ export default function PurchaseOrdersPage() {
     alert(`Sending PO ${order.id} to ${order.supplier}...\nThis would send an email in production.`)
   }
 
+  const handleApproveRequest = (requestId: string) => {
+    setRequests(requests.map((req) => (req.id === requestId ? { ...req, status: "approved" as RequestStatus } : req)))
+  }
+
+  const handleDeclineRequest = (requestId: string) => {
+    setRequests(requests.map((req) => (req.id === requestId ? { ...req, status: "declined" as RequestStatus } : req)))
+  }
+
+  const convertRequestToPO = (request: PurchaseRequest) => {
+    // In production, this would open the PO form with pre-filled data from the request
+    alert(`Converting ${request.id} to Purchase Order...\nThis would pre-fill the PO form in production.`)
+    setShowForm(true)
+  }
+
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -191,6 +334,18 @@ export default function PurchaseOrdersPage() {
       order.items.some((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesStatus = statusFilter === "all" || order.status === statusFilter
+
+    return matchesSearch && matchesStatus
+  })
+
+  const filteredRequests = requests.filter((request) => {
+    const matchesSearch =
+      request.id.toLowerCase().includes(requestSearchTerm.toLowerCase()) ||
+      request.requestedBy.toLowerCase().includes(requestSearchTerm.toLowerCase()) ||
+      request.department.toLowerCase().includes(requestSearchTerm.toLowerCase()) ||
+      request.items.some((item) => item.name.toLowerCase().includes(requestSearchTerm.toLowerCase()))
+
+    const matchesStatus = requestStatusFilter === "all" || request.status === requestStatusFilter
 
     return matchesSearch && matchesStatus
   })
@@ -205,6 +360,25 @@ export default function PurchaseOrdersPage() {
     return variants[status]
   }
 
+  const getRequestStatusBadge = (status: RequestStatus) => {
+    const variants: Record<RequestStatus, { variant: any; className: string }> = {
+      pending: { variant: "secondary", className: "bg-yellow-500" },
+      approved: { variant: "default", className: "bg-green-500" },
+      declined: { variant: "destructive", className: "bg-red-500" },
+    }
+    return variants[status]
+  }
+
+  const getPriorityBadge = (priority: "low" | "medium" | "high" | "urgent") => {
+    const variants = {
+      low: { variant: "outline" as const, className: "border-gray-400 text-gray-400" },
+      medium: { variant: "secondary" as const, className: "bg-blue-500" },
+      high: { variant: "default" as const, className: "bg-orange-500" },
+      urgent: { variant: "destructive" as const, className: "bg-red-600" },
+    }
+    return variants[priority]
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -217,6 +391,237 @@ export default function PurchaseOrdersPage() {
           New Purchase Order
         </Button>
       </div>
+
+      <Tabs defaultValue="requests" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="requests">
+            Purchase Requests
+            {requests.filter((r) => r.status === "pending").length > 0 && (
+              <Badge className="ml-2 bg-yellow-500">{requests.filter((r) => r.status === "pending").length}</Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="orders">Purchase Orders</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="requests" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Purchase Requests</CardTitle>
+                  <CardDescription>Review and approve purchase requests from departments</CardDescription>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <div className="relative w-full sm:w-64">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search requests..."
+                      className="pl-8"
+                      value={requestSearchTerm}
+                      onChange={(e) => setRequestSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <Select value={requestStatusFilter} onValueChange={(value: any) => setRequestStatusFilter(value)}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="declined">Declined</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Request ID</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Requested By</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Department</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Items</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Est. Amount (LKR)</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Required By</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Priority</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRequests.map((request) => (
+                      <tr key={request.id} className="border-b border-border last:border-0">
+                        <td className="py-3 px-4 text-sm font-medium text-foreground">{request.id}</td>
+                        <td className="py-3 px-4 text-sm text-foreground">{request.requestedBy}</td>
+                        <td className="py-3 px-4 text-sm text-foreground">{request.department}</td>
+                        <td className="py-3 px-4 text-sm text-foreground">{request.items.length} item(s)</td>
+                        <td className="py-3 px-4 text-sm text-foreground">LKR {request.totalEstimate.toFixed(2)}</td>
+                        <td className="py-3 px-4 text-sm text-foreground">{request.requiredBy}</td>
+                        <td className="py-3 px-4">
+                          <Badge
+                            variant={getPriorityBadge(request.priority).variant}
+                            className={getPriorityBadge(request.priority).className}
+                          >
+                            {request.priority.toUpperCase()}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge
+                            variant={getRequestStatusBadge(request.status).variant}
+                            className={getRequestStatusBadge(request.status).className}
+                          >
+                            {request.status.toUpperCase()}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex gap-1">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline" onClick={() => setSelectedRequest(request)}>
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                                <DialogHeader>
+                                  <DialogTitle>Purchase Request Details - {request.id}</DialogTitle>
+                                  <DialogDescription>Complete purchase request information</DialogDescription>
+                                </DialogHeader>
+                                {selectedRequest && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <Label className="text-muted-foreground">Requested By</Label>
+                                        <p className="font-medium">{selectedRequest.requestedBy}</p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Department</Label>
+                                        <p className="font-medium">{selectedRequest.department}</p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Status</Label>
+                                        <div className="mt-1">
+                                          <Badge
+                                            variant={getRequestStatusBadge(selectedRequest.status).variant}
+                                            className={getRequestStatusBadge(selectedRequest.status).className}
+                                          >
+                                            {selectedRequest.status.toUpperCase()}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Priority</Label>
+                                        <div className="mt-1">
+                                          <Badge
+                                            variant={getPriorityBadge(selectedRequest.priority).variant}
+                                            className={getPriorityBadge(selectedRequest.priority).className}
+                                          >
+                                            {selectedRequest.priority.toUpperCase()}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Request Date</Label>
+                                        <p className="font-medium">{selectedRequest.requestDate}</p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Required By</Label>
+                                        <p className="font-medium">{selectedRequest.requiredBy}</p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-muted-foreground">Estimated Total</Label>
+                                        <p className="font-medium text-lg">LKR {selectedRequest.totalEstimate.toFixed(2)}</p>
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <Label className="text-muted-foreground">Requested Items</Label>
+                                      <div className="mt-2 border rounded-lg overflow-hidden">
+                                        <table className="w-full">
+                                          <thead className="bg-muted">
+                                            <tr>
+                                              <th className="text-left py-2 px-3 text-sm font-medium">Item Name</th>
+                                              <th className="text-right py-2 px-3 text-sm font-medium">Quantity</th>
+                                              <th className="text-right py-2 px-3 text-sm font-medium">Est. Unit Price</th>
+                                              <th className="text-right py-2 px-3 text-sm font-medium">Est. Total</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {selectedRequest.items.map((item, idx) => (
+                                              <tr key={idx} className="border-t">
+                                                <td className="py-2 px-3 text-sm">{item.name}</td>
+                                                <td className="py-2 px-3 text-sm text-right">{item.quantity}</td>
+                                                <td className="py-2 px-3 text-sm text-right">
+                                                  LKR {item.estimatedUnitPrice.toFixed(2)}
+                                                </td>
+                                                <td className="py-2 px-3 text-sm text-right font-medium">
+                                                  LKR {(item.quantity * item.estimatedUnitPrice).toFixed(2)}
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <Label className="text-muted-foreground">Justification</Label>
+                                      <p className="mt-1 text-sm">{selectedRequest.justification}</p>
+                                    </div>
+
+                                    <div className="flex gap-2 pt-4 border-t">
+                                      {selectedRequest.status === "pending" && (
+                                        <>
+                                          <Button size="sm" onClick={() => handleApproveRequest(selectedRequest.id)}>
+                                            <CheckCircle className="h-4 w-4 mr-2" />
+                                            Approve Request
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="destructive"
+                                            onClick={() => handleDeclineRequest(selectedRequest.id)}
+                                          >
+                                            <XCircle className="h-4 w-4 mr-2" />
+                                            Decline Request
+                                          </Button>
+                                        </>
+                                      )}
+                                      {selectedRequest.status === "approved" && (
+                                        <Button size="sm" onClick={() => convertRequestToPO(selectedRequest)}>
+                                          <Plus className="h-4 w-4 mr-2" />
+                                          Convert to Purchase Order
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </DialogContent>
+                            </Dialog>
+
+                            {request.status === "pending" && (
+                              <>
+                                <Button size="sm" onClick={() => handleApproveRequest(request.id)}>
+                                  <CheckCircle className="h-3 w-3" />
+                                </Button>
+                                <Button size="sm" variant="destructive" onClick={() => handleDeclineRequest(request.id)}>
+                                  <XCircle className="h-3 w-3" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="orders" className="space-y-6">
 
       {showForm && (
         <Card>
@@ -495,19 +900,28 @@ export default function PurchaseOrdersPage() {
                                     Email to Supplier
                                   </Button>
                                   {selectedOrder.status === "draft" && (
-                                    <Button size="sm" onClick={() => updateOrderStatus(selectedOrder.id, "sent")}>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => setConfirmAction({ type: "send", orderId: selectedOrder.id })}
+                                    >
                                       <Send className="h-4 w-4 mr-2" />
                                       Send to Supplier
                                     </Button>
                                   )}
                                   {selectedOrder.status === "sent" && (
-                                    <Button size="sm" onClick={() => updateOrderStatus(selectedOrder.id, "delivered")}>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => setConfirmAction({ type: "deliver", orderId: selectedOrder.id })}
+                                    >
                                       <CheckCircle className="h-4 w-4 mr-2" />
                                       Mark as Delivered
                                     </Button>
                                   )}
                                   {selectedOrder.status === "delivered" && (
-                                    <Button size="sm" onClick={() => updateOrderStatus(selectedOrder.id, "closed")}>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => setConfirmAction({ type: "close", orderId: selectedOrder.id })}
+                                    >
                                       <CheckCircle className="h-4 w-4 mr-2" />
                                       Close PO
                                     </Button>
@@ -519,12 +933,16 @@ export default function PurchaseOrdersPage() {
                         </Dialog>
 
                         {order.status === "draft" && (
-                          <Button size="sm" onClick={() => updateOrderStatus(order.id, "sent")}>
+                          <Button size="sm" onClick={() => setConfirmAction({ type: "send", orderId: order.id })}>
                             <Send className="h-3 w-3" />
                           </Button>
                         )}
                         {order.status === "sent" && (
-                          <Button size="sm" variant="default" onClick={() => updateOrderStatus(order.id, "delivered")}>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => setConfirmAction({ type: "deliver", orderId: order.id })}
+                          >
                             <CheckCircle className="h-3 w-3" />
                           </Button>
                         )}
@@ -537,6 +955,36 @@ export default function PurchaseOrdersPage() {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
+
+      <AlertDialog open={confirmAction.type !== null} onOpenChange={() => setConfirmAction({ type: null, orderId: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmAction.type === "send" && "Confirm Send Order"}
+              {confirmAction.type === "deliver" && "Confirm Delivery"}
+              {confirmAction.type === "close" && "Confirm Close Order"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmAction.type === "send" &&
+                "Are you sure you want to send this purchase order to the supplier? This action will change the order status to 'Sent'."}
+              {confirmAction.type === "deliver" &&
+                "Are you sure you want to mark this order as delivered? This confirms that you have received the items from the supplier."}
+              {confirmAction.type === "close" &&
+                "Are you sure you want to close this purchase order? This action indicates that all processes related to this order are complete."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmAction}>
+              {confirmAction.type === "send" && "Send Order"}
+              {confirmAction.type === "deliver" && "Confirm Delivery"}
+              {confirmAction.type === "close" && "Close Order"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
