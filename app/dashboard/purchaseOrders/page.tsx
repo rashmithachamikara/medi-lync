@@ -546,10 +546,10 @@ export default function PurchaseOrdersPage() {
                           <div className="flex gap-1">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button size="sm" variant="outline" onClick={() => setSelectedRequest(request)}>
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
+                                  <Button size="sm" variant="outline" onClick={() => setSelectedRequest(request)} title="View Request" aria-label={`View request ${request.id}`}>
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
                               <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                                 <DialogHeader>
                                   <DialogTitle>Purchase Request Details - {request.id}</DialogTitle>
@@ -678,6 +678,8 @@ export default function PurchaseOrdersPage() {
                                 <Button
                                   size="sm"
                                   onClick={() => setConfirmRequestAction({ type: "approve", requestId: request.id })}
+                                  title="Approve"
+                                  aria-label={`Approve request ${request.id}`}
                                 >
                                   <CheckCircle className="h-3 w-3" />
                                 </Button>
@@ -685,6 +687,8 @@ export default function PurchaseOrdersPage() {
                                   size="sm"
                                   variant="destructive"
                                   onClick={() => setConfirmRequestAction({ type: "decline", requestId: request.id })}
+                                  title="Decline"
+                                  aria-label={`Decline request ${request.id}`}
                                 >
                                   <XCircle className="h-3 w-3" />
                                 </Button>
@@ -835,6 +839,8 @@ export default function PurchaseOrdersPage() {
                           size="icon"
                           variant="ghost"
                           onClick={() => removeItemField(index)}
+                          title="Remove item"
+                          aria-label={`Remove item ${index + 1}`}
                         >
                           <XCircle className="h-4 w-4" />
                         </Button>
@@ -969,6 +975,8 @@ export default function PurchaseOrdersPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => setSelectedOrder(order)}
+                              title="View Order"
+                              aria-label={`View order ${order.id}`}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -1127,6 +1135,8 @@ export default function PurchaseOrdersPage() {
                                     <Button
                                       size="sm"
                                       onClick={() => setConfirmAction({ type: "send", orderId: selectedOrder.id })}
+                                      title="Send"
+                                      aria-label={`Send order ${selectedOrder.id}`}
                                     >
                                       <Send className="h-4 w-4 mr-2" />
                                       Send to Supplier
@@ -1136,6 +1146,8 @@ export default function PurchaseOrdersPage() {
                                     <Button
                                       size="sm"
                                       onClick={() => setConfirmAction({ type: "deliver", orderId: selectedOrder.id })}
+                                      title="Mark as Delivered"
+                                      aria-label={`Mark order ${selectedOrder.id} as delivered`}
                                     >
                                       <CheckCircle className="h-4 w-4 mr-2" />
                                       Mark as Delivered
@@ -1145,6 +1157,8 @@ export default function PurchaseOrdersPage() {
                                     <Button
                                       size="sm"
                                       onClick={() => setConfirmAction({ type: "close", orderId: selectedOrder.id })}
+                                      title="Close"
+                                      aria-label={`Close order ${selectedOrder.id}`}
                                     >
                                       <CheckCircle className="h-4 w-4 mr-2" />
                                       Close PO
@@ -1157,7 +1171,7 @@ export default function PurchaseOrdersPage() {
                         </Dialog>
 
                         {order.status === "draft" && (
-                          <Button size="sm" onClick={() => setConfirmAction({ type: "send", orderId: order.id })}>
+                          <Button size="sm" onClick={() => setConfirmAction({ type: "send", orderId: order.id })} title="Send" aria-label={`Send order ${order.id}`}>
                             <Send className="h-3 w-3" />
                           </Button>
                         )}
@@ -1166,6 +1180,8 @@ export default function PurchaseOrdersPage() {
                             size="sm"
                             variant="default"
                             onClick={() => setConfirmAction({ type: "deliver", orderId: order.id })}
+                            title="Mark Delivered"
+                            aria-label={`Mark order ${order.id} as delivered`}
                           >
                             <CheckCircle className="h-3 w-3" />
                           </Button>

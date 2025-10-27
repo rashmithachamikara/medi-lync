@@ -537,6 +537,8 @@ export default function SuppliersPage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setSelectedSupplier(supplier)}
+                                title="View Details"
+                                aria-label={`View details for ${supplier.name}`}
                               >
                                 <Eye className="h-4 w-4" />
                               </Button>
@@ -932,6 +934,8 @@ export default function SuppliersPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => startEdit(supplier)}
+                            title="Edit"
+                            aria-label={`Edit ${supplier.name}`}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
