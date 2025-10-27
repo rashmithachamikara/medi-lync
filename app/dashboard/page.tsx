@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Package,
   ShoppingCart,
@@ -10,7 +10,7 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 
-const mockMetrics = [
+const allMetrics = [
   {
     title: "Inventory Items",
     value: "1,234",
@@ -19,6 +19,7 @@ const mockMetrics = [
     trend: "down",
     bgColor: "bg-purple-50 dark:bg-purple-950/20",
     iconColor: "text-purple-600 dark:text-purple-400",
+    roles: ["pharmacist", "manager", "admin"],
   },
   {
     title: "Pending Orders",
@@ -28,6 +29,7 @@ const mockMetrics = [
     trend: "up",
     bgColor: "bg-orange-50 dark:bg-orange-950/20",
     iconColor: "text-orange-600 dark:text-orange-400",
+    roles: ["pharmacist", "manager", "admin"],
   },
   {
     title: "Low Stock Items",
@@ -37,6 +39,7 @@ const mockMetrics = [
     trend: "up",
     bgColor: "bg-red-50 dark:bg-red-950/20",
     iconColor: "text-red-600 dark:text-red-400",
+    roles: ["pharmacist", "manager", "admin"],
   },
   {
     title: "Monthly Revenue",
@@ -46,6 +49,7 @@ const mockMetrics = [
     trend: "up",
     bgColor: "bg-green-50 dark:bg-green-950/20",
     iconColor: "text-green-600 dark:text-green-400",
+    roles: ["manager", "admin"],
   },
 ];
 
@@ -68,7 +72,22 @@ const activityColors = {
 };
 
 export default function DashboardPage() {
-  const [user] = useState({ name: "Admin User" });
+  const [user, setUser] = useState<any>(null);
+  const [metrics, setMetrics] = useState(allMetrics);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      
+      // Filter metrics based on user role
+      const filteredMetrics = allMetrics.filter(metric => 
+        metric.roles.includes(parsedUser.role)
+      );
+      setMetrics(filteredMetrics);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
@@ -79,8 +98,8 @@ export default function DashboardPage() {
         </h3>
 
         {/* Metrics Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {mockMetrics.map((metric, idx) => (
+        <div className={`grid gap-4 sm:grid-cols-2 ${metrics.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
+          {metrics.map((metric, idx) => (
             <div
               key={metric.title}
               className="p-4 flex flex-col justify-between rounded-2xl shadow-lg bg-white dark:bg-slate-900 hover:shadow-xl transition-all duration-300"
