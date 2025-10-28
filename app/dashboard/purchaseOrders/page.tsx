@@ -452,7 +452,7 @@ export default function PurchaseOrdersPage() {
           Purchase Orders
         </h3>
 
-        <Button onClick={() => setShowForm(!showForm)}>
+        <Button onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-2" />
           New Purchase Order
         </Button>
@@ -706,179 +706,7 @@ export default function PurchaseOrdersPage() {
         </TabsContent>
 
         <TabsContent value="orders" className="space-y-6">
-
-      {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Create New Purchase Order</CardTitle>
-            <CardDescription>
-              Fill in the details to generate a new PO
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmitOrder} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="supplier">Supplier *</Label>
-                  <Select
-                    value={newOrder.supplier}
-                    onValueChange={(value) =>
-                      setNewOrder({ ...newOrder, supplier: value })
-                    }
-                  >
-                    <SelectTrigger id="supplier">
-                      <SelectValue placeholder="Select supplier (sorted by performance)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockSuppliers
-                        .sort((a, b) => b.performance - a.performance)
-                        .map((supplier) => (
-                          <SelectItem key={supplier.id} value={supplier.id}>
-                            {supplier.name} (Performance: {supplier.performance}
-                            %)
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="deliveryDate">Expected Delivery Date *</Label>
-                  <Input
-                    id="deliveryDate"
-                    type="date"
-                    value={newOrder.expectedDeliveryDate}
-                    onChange={(e) =>
-                      setNewOrder({
-                        ...newOrder,
-                        expectedDeliveryDate: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="paymentTerms">Payment Terms *</Label>
-                  <Select
-                    value={newOrder.paymentTerms}
-                    onValueChange={(value) =>
-                      setNewOrder({ ...newOrder, paymentTerms: value })
-                    }
-                  >
-                    <SelectTrigger id="paymentTerms">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Net 15">Net 15 Days</SelectItem>
-                      <SelectItem value="Net 30">Net 30 Days</SelectItem>
-                      <SelectItem value="Net 45">Net 45 Days</SelectItem>
-                      <SelectItem value="Net 60">Net 60 Days</SelectItem>
-                      <SelectItem value="Due on Receipt">
-                        Due on Receipt
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>Order Items *</Label>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={addItemField}
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Item
-                  </Button>
-                </div>
-
-                {newOrder.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid gap-3 md:grid-cols-4 p-3 border rounded-lg"
-                  >
-                    <div className="space-y-1 md:col-span-2">
-                      <Input
-                        placeholder="Item name"
-                        value={item.name}
-                        onChange={(e) =>
-                          updateItemField(index, "name", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Input
-                        type="number"
-                        placeholder="Quantity"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItemField(index, "quantity", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1 flex gap-2">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="Unit Price (LKR)"
-                        value={item.unitPrice}
-                        onChange={(e) =>
-                          updateItemField(index, "unitPrice", e.target.value)
-                        }
-                        required
-                      />
-                      {newOrder.items.length > 1 && (
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => removeItemField(index)}
-                          title="Remove item"
-                          aria-label={`Remove item ${index + 1}`}
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes / Special Instructions</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Add any special instructions or notes..."
-                  value={newOrder.notes}
-                  onChange={(e) =>
-                    setNewOrder({ ...newOrder, notes: e.target.value })
-                  }
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button type="submit">Create Purchase Order</Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowForm(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card className="mt-8">
+      <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <CardTitle>All Purchase Orders</CardTitle>
@@ -1255,6 +1083,197 @@ export default function PurchaseOrdersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Create Purchase Order Dialog */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="!max-w-[50vw] max-h-[95vh] overflow-y-auto">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl">Create New Purchase Order</DialogTitle>
+            <DialogDescription className="text-base">
+              Fill in the details to generate a new PO
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitOrder} className="space-y-6 mt-4">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label htmlFor="supplier" className="text-base">Supplier *</Label>
+                <Select
+                  value={newOrder.supplier}
+                  onValueChange={(value) =>
+                    setNewOrder({ ...newOrder, supplier: value })
+                  }
+                >
+                  <SelectTrigger id="supplier" className="h-11">
+                    <SelectValue placeholder="Select supplier (sorted by performance)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockSuppliers
+                      .sort((a, b) => b.performance - a.performance)
+                      .map((supplier) => (
+                        <SelectItem key={supplier.id} value={supplier.id}>
+                          {supplier.name} (Performance: {supplier.performance}
+                          %)
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-3">
+                  <Label htmlFor="deliveryDate" className="text-base">Expected Delivery Date *</Label>
+                  <Input
+                    id="deliveryDate"
+                    type="date"
+                    className="h-11"
+                    value={newOrder.expectedDeliveryDate}
+                    onChange={(e) =>
+                      setNewOrder({
+                        ...newOrder,
+                        expectedDeliveryDate: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="paymentTerms" className="text-base">Payment Terms *</Label>
+                  <Select
+                    value={newOrder.paymentTerms}
+                    onValueChange={(value) =>
+                      setNewOrder({ ...newOrder, paymentTerms: value })
+                    }
+                  >
+                    <SelectTrigger id="paymentTerms" className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Net 15">Net 15 Days</SelectItem>
+                      <SelectItem value="Net 30">Net 30 Days</SelectItem>
+                      <SelectItem value="Net 45">Net 45 Days</SelectItem>
+                      <SelectItem value="Net 60">Net 60 Days</SelectItem>
+                      <SelectItem value="Due on Receipt">
+                        Due on Receipt
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b">
+                <Label className="text-base font-semibold">Order Items *</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addItemField}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Item
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+              {newOrder.items.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-4 border rounded-lg bg-muted/30"
+                >
+                  <div className="grid gap-4 lg:grid-cols-12 items-start">
+                    <div className="lg:col-span-5">
+                      <Label className="text-sm font-medium block min-h-[24px] mb-2 whitespace-nowrap">Item Name</Label>
+                      <Input
+                        placeholder="Enter item name"
+                        className="h-11"
+                        value={item.name}
+                        onChange={(e) =>
+                          updateItemField(index, "name", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <Label className="text-sm font-medium block min-h-[24px] mb-2 whitespace-nowrap">Quantity</Label>
+                      <Input
+                        type="number"
+                        placeholder="Qty"
+                        className="h-11"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          updateItemField(index, "quantity", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="lg:col-span-3">
+                      <Label className="text-sm font-medium block min-h-[24px] mb-2 whitespace-nowrap overflow-hidden text-ellipsis">Unit Price (LKR)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="Price"
+                        className="h-11"
+                        value={item.unitPrice}
+                        onChange={(e) =>
+                          updateItemField(index, "unitPrice", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <Label className="text-sm font-medium block min-h-[24px] mb-2 whitespace-nowrap">Action</Label>
+                      {newOrder.items.length > 1 ? (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          className="h-11 w-full"
+                          onClick={() => removeItemField(index)}
+                          title="Remove item"
+                          aria-label={`Remove item ${index + 1}`}
+                        >
+                          <XCircle className="h-5 w-5" />
+                        </Button>
+                      ) : (
+                        <div className="h-11"></div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="notes" className="text-base">Notes / Special Instructions</Label>
+              <Textarea
+                id="notes"
+                placeholder="Add any special instructions or notes..."
+                className="min-h-[100px] resize-none"
+                value={newOrder.notes}
+                onChange={(e) =>
+                  setNewOrder({ ...newOrder, notes: e.target.value })
+                }
+                rows={4}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4 border-t">
+              <Button type="submit" className="h-11 px-6">Create Purchase Order</Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 px-6"
+                onClick={() => setShowForm(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
