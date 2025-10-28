@@ -484,6 +484,8 @@ export default function GoodsReceivingPage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setSelectedReceipt(receipt)}
+                                title="View Receipt"
+                                aria-label={`View receipt ${receipt.id}`}
                               >
                                 <Eye className="h-4 w-4" />
                               </Button>
@@ -852,6 +854,8 @@ export default function GoodsReceivingPage() {
                         size="icon"
                         variant="ghost"
                         onClick={() => removeDiscrepancy(index)}
+                        title="Remove discrepancy"
+                        aria-label={`Remove discrepancy ${index + 1}`}
                       >
                         <XCircle className="h-4 w-4" />
                       </Button>
